@@ -10,7 +10,7 @@ class DbtModel:
         name (str): The name of the model.
         description (str, optional): The description of the model.
         columns (list[DbtModelColumn], optional): A list of columns contained in the model.
-            May or may not be exhaustive.
+        May or may not be exhaustive.
     """
 
     def __init__(self, model_dict: DbtModelDict) -> None:
@@ -83,7 +83,7 @@ class DbtModel:
 
         Args:
             template_function (fn, optional): A function that takes a model name, description and a list
-                of columns as arguments and returns a text description of the model.
+            of columns as arguments and returns a text description of the model.
 
         Returns:
             str: A pre-formatted string that documents the column
