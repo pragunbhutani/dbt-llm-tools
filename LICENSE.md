@@ -1,4 +1,6 @@
-Copyright (c) 2023-2024 [Pragun Bhutani](https://pragunbhutani.com) & [Delta 4 Technologies](https://delta4.tech).
+The MIT License (MIT)
+
+Copyright (c) 2024 [Pragun Bhutani](https://pragunbhutani.com) & [Delta 4 Technologies](https://delta4.tech).
 
 Portions of this software are licensed as follows:
 
