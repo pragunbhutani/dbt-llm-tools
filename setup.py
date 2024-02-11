@@ -12,7 +12,7 @@ with open(path.join(HERE, "README.md"), encoding="utf-8") as f:
 
 setup(
     name="ragstar",
-    version="0.1.1",
+    version="0.1.2",
     description="RAG based LLM chatbot for dbt projects.",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -31,5 +31,14 @@ setup(
     ],
     packages=["ragstar"],
     include_package_data=True,
-    install_requires=["pyyaml", "typing_extensions", "chromadb", "openai", "pylint"],
+    install_requires=[
+        "pyyaml",
+        "typing_extensions",
+        "chromadb",
+        "openai",
+        "pylint",
+        "sphinx",
+        "recommonmark",
+        "sphinx_rtd_theme",
+    ],
 )

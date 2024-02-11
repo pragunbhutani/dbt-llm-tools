@@ -38,10 +38,13 @@ class Chatbot:
         Args:
             dbt_project_root (str): The absolute path to the root of the dbt project.
             openai_api_key (str): Your OpenAI API key.
+
             embedding_model (str, optional): The name of the OpenAI embedding model to be used.
-                Defaults to "text-embedding-3-large".
+            Defaults to "text-embedding-3-large".
+
             chatbot_model (str, optional): The name of the OpenAI chatbot model to be used.
-                Defaults to "gpt-4-turbo-preview".
+            Defaults to "gpt-4-turbo-preview".
+
             db_persist_path (str, optional): The path to the persistent database file. Defaults to "./chroma.db".
 
         Returns:
@@ -160,10 +163,12 @@ class Chatbot:
 
         Args:
             models (list[str], optional): A list of model names to load into the vector store.
+
             included_folders (list[str], optional): A list of paths to all folders that should be included
-                in model search. Paths are relative to dbt project root.
+            in model search. Paths are relative to dbt project root.
+
             exclude_folders (list[str], optional): A list of paths to all folders that should be excluded
-                in model search. Paths are relative to dbt project root.
+            in model search. Paths are relative to dbt project root.
 
         Returns:
             None

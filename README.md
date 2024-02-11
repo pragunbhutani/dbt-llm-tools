@@ -13,7 +13,7 @@ pip install dbt-rag-tools
 How to multiply one number by another with this lib:
 
 ```Python
-from ragster import DbtProject
+from ragstar import DbtProject
 
 # Instantiate a DBT Project object
 project = DbtProject('/path/to/dbt/project')

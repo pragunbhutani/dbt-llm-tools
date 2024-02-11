@@ -74,6 +74,8 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+docs/_static/
+docs/_templates/
 
 # PyBuilder
 .pybuilder/
@@ -197,3 +199,6 @@ pyrightconfig.json
 ### Vector Store Instances ###
 chroma.db
 test_chroma.db
+
+### Mac
+*.DS_Store

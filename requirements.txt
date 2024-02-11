@@ -1,2 +1,8 @@
 pyyaml
 typing_extensions
+pylint
+chromadb
+openai
+sphinx
+recommonmark
+sphinx_rtd_theme
