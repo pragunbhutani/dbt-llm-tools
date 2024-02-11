@@ -1,3 +1,5 @@
+# pylint: skip-file
+
 # -- Path setup ----------------------------------------
 import os
 import sys
