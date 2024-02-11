@@ -31,12 +31,13 @@ chatbot = Chatbot(
 
 # Step 1. Load models information from your dbt ymls into a local vector store
 chatbot.load_models(
-	models=['list', 'of', 'models', 'to', 'select'],
-	included_folders=[
-		'folder/to/scan/for/ymls',
-		'another/folder/here'
-	],
-	excluded_folders=['ignore/any/yamls/found/here']
+    # Optional:
+	# models=['list', 'of', 'models', 'to', 'select'],
+	# included_folders=[
+	# 	'folder/to/scan/for/ymls',
+	#	'another/folder/here'
+	# ],
+	#excluded_folders=['ignore/any/yamls/found/here']
 )
 
 # Step 2. Ask the chatbot a question
