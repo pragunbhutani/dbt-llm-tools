@@ -1,3 +1,5 @@
 pyyaml
 typing_extensions
 pylint
+chromadb
+openai
