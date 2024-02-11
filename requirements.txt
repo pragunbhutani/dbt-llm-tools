@@ -1,2 +1,3 @@
 pyyaml
 typing_extensions
+pylint
