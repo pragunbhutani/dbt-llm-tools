@@ -12,11 +12,11 @@ with open(path.join(HERE, "README.md"), encoding="utf-8") as f:
 
 setup(
     name="ragstar",
-    version="0.1.3",
+    version="0.1.4",
     description="RAG based LLM chatbot for dbt projects.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://ragstar.readthedocs.io/",
+    url="https://github.com/pragunbhutani/ragstar",
     author="Pragun Bhutani",
     author_email="bhutani.pragun@gmail.com",
     license="MIT",
