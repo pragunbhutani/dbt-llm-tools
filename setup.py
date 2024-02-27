@@ -12,7 +12,7 @@ with open(path.join(HERE, "README.md"), encoding="utf-8") as f:
 
 setup(
     name="ragstar",
-    version="0.1.1",
+    version="0.1.3",
     description="RAG based LLM chatbot for dbt projects.",
     long_description=long_description,
     long_description_content_type="text/markdown",
