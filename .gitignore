@@ -201,4 +201,4 @@ chroma.db
 test_chroma.db
 
 ### Mac
-*.DS_Store
+.DS_Store
