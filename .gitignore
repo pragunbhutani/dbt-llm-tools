@@ -199,6 +199,8 @@ pyrightconfig.json
 ### Vector Store Instances ###
 chroma.db
 test_chroma.db
+directory.json
+.database/*
 
 ### Mac
 .DS_Store

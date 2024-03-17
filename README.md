@@ -1,7 +1,11 @@
+# Ragstar - LLM Tools for DBT Projects
 
-# Ragstar
+Ragstar (inspired by `RAG & select *`) is set of LLM powered tools to elevate your dbt projects and supercharge your data team.
 
-Ragstar (inspired by `RAG & select *`) is a tool that enables you to ask ChatGPT questions about your dbt project.
+These tools include:
+
+- Chatbot: ask questions about data and get answers based on your dbt model documentation
+- Docbot: generate documentation for dbt models based on model and upstream model definition.
 
 ## Get Started
 
@@ -13,9 +17,9 @@ Ragstar can be installed via pip.
 pip install ragstar
 ```
 
-### Basic Usage
+## Basic Usage - Chatbot
 
-How to multiply one number by another with this lib:
+How to load your dbt project into the Chatbot and ask questions about your data.
 
 ```Python
 from ragstar import Chatbot
@@ -34,18 +38,11 @@ response = chatbot.ask_question(
 	'How can I obtain the number of customers who upgraded to a paid plan in the last 3 months?'
 )
 print(response)
-
-# Step 3. Clear your local database (Optional).
-# You only need to do this if you would like to load a different project into your db
-# or restart from scratch for whatever reason.
-
-# If you make any changes to your existing models and load them again, they get upserted into the database.
-chatbot.reset_model_db()
 ```
 
 **Note**: Ragstar currently only supports OpenAI ChatGPT models for generating embeddings and responses to queries.
 
-## How it works
+### How it works
 
 Ragstar is based on the concept of Retrieval Augmented Generation and basically works as follows:
 
@@ -55,10 +52,29 @@ Ragstar is based on the concept of Retrieval Augmented Generation and basically 
 - These models are then fed into ChatGPT as a prompt, along with some basic instructions and your question.
 - The response is returned to you as a string.
 
+## Basic Usage - Docbot
+
+How to load your dbt project into the DocBot and have it write documentation for your models.
+
+```Python
+from ragstar import Docbot
+
+# Instantiate a docbot object
+bot = Docbot(
+    dbt_project_root="YOUR_DBT_PROJECT_PATH",
+    openai_api_key="YOUR_OPENAI_API_KEY",
+)
+
+# Ask docbot to generate documentation for a model and all its upstream models
+bot.generate_documentation(model_name='dbt_model_name')
+```
+
 ## Advanced Usage
+
 You can control the behaviour of some of the class member functions in more detail, or inspect the underlying classes for more functionality.
 
 The Chatbot is composed of two classes:
+
 - Vector Store
 - DBT Project
   - Composed of DBT Model
@@ -66,6 +82,7 @@ The Chatbot is composed of two classes:
 Here are the classes and methods they expose:
 
 ### Chatbot
+
 A class representing a chatbot that allows users to ask questions about dbt models.
 
     Attributes:
@@ -83,7 +100,8 @@ A class representing a chatbot that allows users to ask questions about dbt mode
 
 ### Methods
 
-#### __init__
+#### **init**
+
 Initializes a chatbot object along with a default set of instructions.
 
         Args:
@@ -94,15 +112,16 @@ Initializes a chatbot object along with a default set of instructions.
             Defaults to "text-embedding-3-large".
 
             chatbot_model (str, optional): The name of the OpenAI chatbot model to be used.
-	            Defaults to "gpt-4-turbo-preview".
+                Defaults to "gpt-4-turbo-preview".
 
-            db_persist_path (str, optional): The path to the persistent database file. 
-	            Defaults to "./chroma.db".
+            db_persist_path (str, optional): The path to the persistent database file.
+                Defaults to "./chroma.db".
 
         Returns:
             None
 
 #### load_models
+
 Upsert the set of models that will be available to your chatbot into a vector store. The chatbot will only be able to use these models to answer questions and nothing else.
 
 The default behavior is to load all models in the dbt project, but you can specify a subset of models, included folders or excluded folders to customize the set of models that will be available to the chatbot.
@@ -137,12 +156,14 @@ This will reset and remove all the models from the vector store. You'll need to 
             None
 
 #### get_instructions
+
 Get the instructions being used to tune the chatbot.
 
         Returns:
             list[str]: A list of instructions being used to tune the chatbot.
 
 #### set_instructions
+
 Set the instructions for the chatbot.
 
         Args:
@@ -150,7 +171,9 @@ Set the instructions for the chatbot.
 
         Returns:
             None
+
 #### set_embedding_model
+
 Set the embedding model for the vector store.
 
         Args:
@@ -158,8 +181,9 @@ Set the embedding model for the vector store.
 
         Returns:
             None
-            
+
 #### set_chatbot_model
+
 Set the chatbot model for the chatbot.
 
         Args:
@@ -169,9 +193,10 @@ Set the chatbot model for the chatbot.
             None
 
 ## Appendices
+
 These are the underlying classes that are used to compose the functionality of the chatbot.
 
-### Vector Store    
+### Vector Store
 
 A class representing a vector store for dbt models.
 
@@ -181,16 +206,18 @@ A class representing a vector store for dbt models.
         reset_collection: Clear the collection of all documents.
 
 ### DBT Project
-   A class representing a DBT project yaml parser.
+
+A class representing a DBT project yaml parser.
 
     Attributes:
         project_root (str): Absolute path to the root of the dbt project being parsed
 
 ### DBT Model
+
 A class representing a dbt model.
 
     Attributes:
         name (str): The name of the model.
         description (str, optional): The description of the model.
         columns (list[DbtModelColumn], optional): A list of columns contained in the model.
-	        May or may not be exhaustive.
+            May or may not be exhaustive.
