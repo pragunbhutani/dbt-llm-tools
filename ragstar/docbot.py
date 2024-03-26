@@ -1,4 +1,6 @@
+import os
 import json
+import yaml
 
 from ragstar.instructions import INTERPRET_MODEL_INSTRUCTIONS
 from ragstar.dbt_project import DbtProject
@@ -7,6 +9,10 @@ from openai import OpenAI
 
 
 class Docbot:
+    """
+    A class that generates documentation for dbt models using large language models.
+    """
+
     def __init__(
         self,
         dbt_project_root: str,
@@ -14,6 +20,22 @@ class Docbot:
         language_model: str = "gpt-4-turbo-preview",
         database_path: str = "./directory.json",
     ):
+        """
+        Initializes a Docbot object.
+
+        Args:
+            dbt_project_root (str): Root of the dbt project
+            openai_api_key (str): OpenAI API key
+            language_model (str, optional): The language model to use for generating documentation. Defaults to "gpt-4-turbo-preview".
+            database_path (str, optional): Path to the directory file that stores the parsed dbt project. Defaults to "./directory.json".
+
+        Attributes:
+            dbt_project (DbtProject): A DbtProject object representing the dbt project.
+
+        Methods:
+            interpret_model: Interpret a dbt model using the language model.
+            generate_documentation: Generate documentation for a dbt model.
+        """
         self.dbt_project = DbtProject(
             dbt_project_root=dbt_project_root, database_path=database_path
         )
@@ -21,13 +43,75 @@ class Docbot:
         self.__language_model = language_model
         self.__client = OpenAI(api_key=openai_api_key)
 
-    def __get_system_prompt(self, message):
+    def __get_system_prompt(self, message: str):
+        """
+        Get the system prompt for the language model.
+
+        Args:
+            message (str): The message to include in the system prompt.
+
+        Returns:
+            dict: The system prompt for the language model.
+        """
         return {
             "role": "system",
             "content": message,
         }
 
-    def interpret_model(self, model):
+    def __save_interpretation_to_yaml(
+        self, model: dict, overwrite_existing: bool = False
+    ):
+        """
+        Save the interpretation of a model to a yaml file.
+
+        Args:
+            model (dict): The model to save the interpretation for.
+            overwrite_existing (bool, optional): Whether to overwrite the existing model yaml documentation if it exists. Defaults to False.
+        """
+        yaml_path = model.get("yaml_path")
+
+        if yaml_path is not None:
+            if not overwrite_existing:
+                raise Exception(
+                    f"Model already has documentation at {model['yaml_path']}"
+                )
+
+            with open(model["yaml_path"], "r") as infile:
+                existing_yaml = yaml.load(infile, Loader=yaml.FullLoader)
+                existing_models = existing_yaml.get("models", [])
+
+                search_idx = -1
+                for idx, m in enumerate(existing_models):
+                    if m["name"] == model["name"]:
+                        search_idx = idx
+
+                if search_idx != -1:
+                    existing_models[search_idx] = model["interpretation"]
+                else:
+                    existing_models.append(model["interpretation"])
+
+                existing_yaml["models"] = existing_models
+                yaml_content = existing_yaml
+        else:
+            model_path = model["absolute_path"]
+            head, tail = os.path.split(model_path)
+            yaml_path = os.path.join(head, "_" + tail.replace(".sql", ".yml"))
+
+            yaml_content = {"version": 2, "models": [model["interpretation"]]}
+
+        with open(yaml_path, "w") as outfile:
+            yaml.dump(yaml_content, outfile, default_flow_style=False, sort_keys=False)
+
+    def interpret_model(self, model: dict):
+        """
+        Interpret a dbt model using the large language model.
+
+        Args:
+            model (dict): The dbt model to interpret.
+
+        Returns:
+            dict: The interpretation of the model.
+        """
         print(f"Interpreting model: {model['name']}")
 
         prompt = []
@@ -49,7 +133,7 @@ class Docbot:
             prompt.append(
                 self.__get_system_prompt(
                     f"""
-                    
+
                     The model {model["name"]} references the following models: {", ".join(refs)}.               
                     The interpretation for each of these models is as follows:
                     """
@@ -86,7 +170,14 @@ class Docbot:
 
         return json.loads(response)
 
-    def generate_documentation(self, model_name):
+    def generate_documentation(self, model_name: str, save_to_yaml: bool = False):
+        """
+        Generate documentation for a dbt model.
+
+        Args:
+            model_name (str): The name of the model to generate documentation for.
+            save_to_yaml (bool, optional): Whether to save the documentation to a yaml file. Defaults to False.
+        """
         model = self.dbt_project.get_single_model(model_name)
 
         for dep in model.get("deps", []):
@@ -94,7 +185,11 @@ class Docbot:
 
             if dep_model.get("interpretation") is None:
                 dep_model["interpretation"] = self.interpret_model(dep_model)
-                self.dbt_project.update_model(dep_model)
+                self.dbt_project.update_model_directory(dep_model)
 
         model["interpretation"] = self.interpret_model(model)
-        self.dbt_project.update_model(model)
+
+        if save_to_yaml:
+            self.__save_interpretation_to_yaml(model)
+
+        self.dbt_project.update_model_directory(model)

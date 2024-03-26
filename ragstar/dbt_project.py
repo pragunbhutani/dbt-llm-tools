@@ -13,10 +13,7 @@ REF_SEARCH_EXPRESSION = "ref\(['\"]*(.*?)['\"]*\)"
 
 class DbtProject:
     """
-    A class representing a DBT project yaml parser.
-
-    Attributes:
-        project_root (str): Absolute path to the root of the dbt project being parsed
+    A class representing a DBT project.
     """
 
     def __init__(
@@ -28,7 +25,14 @@ class DbtProject:
         Initializes a dbt project parser object.
 
         Args:
-            project_root (str): Root of the dbt prject
+            dbt_project_root (str): Root of the dbt prject
+            database_path (str, optional): Path to the directory file that stores the parsed dbt project.
+
+        Methods:
+            parse: Parse the dbt project and store details in a manifest file.
+            get_single_model: Get a single model by name.
+            get_models: Get a list of models based on the provided filters.
+            update_model_directory: Update a model in the directory.
         """
         self.__project_root = dbt_project_root
         self.__directory_path = database_path
@@ -49,93 +53,44 @@ class DbtProject:
         self.__sql_files = self.__get_all_files("sql")
         self.__yaml_files = self.__get_all_files("yml")
 
-        self.parse()
-
-    # def get_models(
-    #     self,
-    #     models: list[str] = None,
-    #     included_folders: list[str] = None,
-    #     excluded_folders: list[str] = None,
-    # ) -> list[DbtModel]:
-    #     """
-    #     Scan all the YMLs in the specified folders and extract all models into a single list.
-
-    #     Args:
-    #         models (list[str], optional): A list of model names to include in the search.
-
-    #         included_folders (list[str], optional): A list of paths to all folders that should be included
-    #             in model search. Paths are relative to dbt project root.
-
-    #         exclude_folders (list[str], optional): A list of paths to all folders that should be excluded
-    #             in model search. Paths are relative to dbt project root.
-
-    #     Returns:
-    #         list[DbtModel]: A list of Dbt Model objects for each model found in the included folders
-    #     """
-    #     parsed_models = []
-    #     yaml_files = []
-
-    #     if included_folders is None:
-    #         included_folders = self.__model_paths
-
-    #     for folder in included_folders:
-    #         if folder[0] == "/":
-    #             folder = folder[1:]
-
-    #         yaml_files.extend(
-    #             glob.glob(
-    #                 os.path.join(self.__project_root, folder, "**", "*.yml"),
-    #                 recursive=True,
-    #             )
-    #         )
-
-    #     if not yaml_files:
-    #         raise Exception("No YAML files found in the specified folders")
-
-    #     for file in yaml_files:
-    #         should_exclude_file = False
-
-    #         for excluded_folder in excluded_folders or []:
-    #             if excluded_folder in file:
-    #                 should_exclude_file = True
-    #                 continue
-
-    #         if should_exclude_file:
-    #             continue
-
-    #         with open(file, encoding="utf-8") as f:
-    #             yaml_contents = yaml.safe_load(f)
-
-    #             if yaml_contents is None:
-    #                 continue
-
-    #             for model in yaml_contents.get("models", []):
-    #                 if (models is not None) and (model.get("name") not in models):
-    #                     continue
-    #                 parsed_models.append(DbtModel(model))
-
-    #     if not parsed_models:
-    #         raise Exception("No model ymls found in the specified folders")
-
-    #     return parsed_models
-
-    def __get_all_files(self, file_type):
+    def __get_all_files(self, file_extension: str):
         """
         Get all files of a certain type in the dbt project.
+
+        Args:
+            file_extension (str): The file extension to search for.
+
+        Returns:
+            list: A list of files with the specified extension.
         """
         files = []
 
         for path in self.__model_paths:
             files.extend(
                 glob.glob(
-                    os.path.join(self.__project_root, path, "**", f"*.{file_type}"),
+                    os.path.join(
+                        self.__project_root, path, "**", f"*.{file_extension}"
+                    ),
                     recursive=True,
                 )
             )
 
         return files
 
-    def __find_upstream_references(self, file_path, recursive=False, dependencies=[]):
+    def __find_upstream_references(
+        self, file_path: str, recursive: bool = False, dependencies: list[str] = []
+    ):
+        """
+        Find upstream references in a SQL file.
+
+        Args:
+            file_path (str): The path to the SQL file.
+            recursive (bool, optional): Whether to recursively search for upstream references.
+            dependencies (list, optional): A list of dependencies to add to.
+
+        Returns:
+            list: A list of upstream references.
+        """
         with open(file_path, encoding="utf-8") as f:
             file_contents = f.read()
 
@@ -155,7 +110,13 @@ class DbtProject:
 
     def __parse_sql_file(self, sql_file: str):
         """
-        Parse a SQL file and return a dictionary with the model name and description.
+        Parse a SQL file and return a dictionary with the file metadata.
+
+        Args:
+            sql_file (str): The path to the SQL file.
+
+        Returns:
+            dict: A dictionary containing the parsed SQL file metadata.
         """
         with open(sql_file, encoding="utf-8") as f:
             sql_contents = f.read()
@@ -177,9 +138,16 @@ class DbtProject:
             "sql_contents": sql_contents,
         }
 
-    def __parse_yaml_files(self, yaml_files):
+    def __parse_yaml_files(self, yaml_files: list[str]):
         """
         Extract documentation from the parsed yaml files.
+
+        Args:
+            yaml_files (list): A list of yaml files to parse.
+
+        Returns:
+            dict: A dictionary containing the parsed models.
+            dict: A dictionary containing the parsed sources.
         """
         models = {}
         sources = {}
@@ -207,10 +175,22 @@ class DbtProject:
         return models, sources
 
     def __get_directory(self):
+        """
+        Get the parsed directory from the directory file.
+
+        Returns:
+            dict: The parsed directory.
+        """
         with open(self.__directory_path, encoding="utf-8") as f:
             return json.load(f)
 
     def __save_directory(self, directory):
+        """
+        Save the parsed directory to a file.
+
+        Args:
+            directory (dict): The directory to save.
+        """
         with open(self.__directory_path, "w", encoding="utf-8") as f:
             json.dump(directory, f, ensure_ascii=False, indent=4)
 
@@ -218,8 +198,8 @@ class DbtProject:
         """
         Parse the dbt project and store details in a manifest file.
 
-        Args:
-            write_to_directory (bool, optional): Whether to write the parsed manifest to a file.
+        Returns:
+            dict: The parsed directory.
         """
         # source_sql_models = list(map(self.__parse_sql_file, self.__sql_files))
         source_sql_models = {}
@@ -232,8 +212,17 @@ class DbtProject:
             self.__yaml_files
         )
 
-        for model in source_sql_models.keys():
-            source_sql_models[model]["documentation"] = documented_models.get(model)
+        for model in documented_models.keys():
+            yaml_path = documented_models[model].pop("yaml_file")
+
+            if model in source_sql_models:
+                source_sql_models[model]["yaml_path"] = yaml_path
+                source_sql_models[model]["documentation"] = documented_models[model]
+            else:
+                source_sql_models[model] = {
+                    "yaml_path": yaml_path,
+                    "documentation": documented_models[model],
+                }
 
         directory = {
             "models": source_sql_models,
@@ -245,6 +234,15 @@ class DbtProject:
         return directory
 
     def get_single_model(self, model_name):
+        """
+        Get a single model by name.
+
+        Args:
+            model_name (str): The name of the model to get.
+
+        Returns:
+            dict: The model object.
+        """
         if model_name is None:
             raise Exception("No model name provided")
 
@@ -258,21 +256,39 @@ class DbtProject:
         included_folders: list[str] = None,
         excluded_folders: list[str] = None,
     ):
+        """
+        Get a list of models based on the provided filters.
+
+        Args:
+            models (list, optional): A list of model names to get.
+            included_folders (list, optional): A list of folders to include in the search for sql or yaml files.
+            excluded_folders (list, optional): A list of folders to exclude from the search for sql or yaml files.
+
+        Returns:
+            list: A list of DbtModel objects.
+        """
         searched_models = []
 
         directory = self.__get_directory()
+
+        if models is None and included_folders is None:
+            searched_models = list(directory["models"].values())
 
         for model in models or []:
             searched_models.append(directory["models"].get(model))
 
         for included_folder in included_folders or []:
             for model in directory["models"].values():
-                if included_folder in model["absolute_path"]:
+                if included_folder in model.get(
+                    "absolute_path", ""
+                ) or included_folder in model.get("yaml_path", ""):
                     searched_models.append(model)
 
         for excluded_folder in excluded_folders or []:
             for model in searched_models:
-                if excluded_folder in model["absolute_path"]:
+                if excluded_folder in model.get(
+                    "absolute_path", ""
+                ) or excluded_folder in model.get("yaml_path", ""):
                     searched_models.remove(model)
 
         models_to_return = []
@@ -283,7 +299,13 @@ class DbtProject:
 
         return models_to_return
 
-    def update_model(self, model):
+    def update_model_directory(self, model: dict):
+        """
+        Update a model in the directory.
+
+        Args:
+            model (dict): The model to update.
+        """
         directory = self.__get_directory()
 
         if model["name"] in directory["models"]:
