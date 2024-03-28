@@ -9,7 +9,12 @@ from ragstar.dbt_project import DbtProject
 from openai import OpenAI
 
 
-class Docbot:
+class MyDumper(yaml.Dumper):
+    def increase_indent(self, flow=False, indentless=False):
+        return super(MyDumper, self).increase_indent(flow, False)
+
+
+class DocumentationGenerator:
     """
     A class that generates documentation for dbt models using large language models.
     """
@@ -22,7 +27,7 @@ class Docbot:
         database_path: str = "./directory.json",
     ) -> None:
         """
-        Initializes a Docbot object.
+        Initializes a Documentation Generator object.
 
         Args:
             dbt_project_root (str): Root of the dbt project
@@ -101,7 +106,13 @@ class Docbot:
             yaml_content = {"version": 2, "models": [model["interpretation"]]}
 
         with open(yaml_path, "w") as outfile:
-            yaml.dump(yaml_content, outfile, default_flow_style=False, sort_keys=False)
+            yaml.dump(
+                yaml_content,
+                outfile,
+                Dumper=MyDumper,
+                default_flow_style=False,
+                sort_keys=False,
+            )
 
     def interpret_model(self, model: DbtModelDirectoryEntry) -> DbtModelDict:
         """
@@ -165,21 +176,17 @@ class Docbot:
             .replace("```", "")
         )
 
-        print("\nResponse received: \n")
-        print(response)
-        print("\n")
-
         return json.loads(response)
 
     def generate_documentation(
-        self, model_name: str, save_to_yaml: bool = False
-    ) -> None:
+        self, model_name: str, write_documentation_to_yaml: bool = False
+    ) -> DbtModelDict:
         """
         Generate documentation for a dbt model.
 
         Args:
             model_name (str): The name of the model to generate documentation for.
-            save_to_yaml (bool, optional): Whether to save the documentation to a yaml file. Defaults to False.
+            write_documentation_to_yaml (bool, optional): Whether to save the documentation to a yaml file. Defaults to False.
         """
         model = self.dbt_project.get_single_model(model_name)
 
@@ -190,9 +197,13 @@ class Docbot:
                 dep_model["interpretation"] = self.interpret_model(dep_model)
                 self.dbt_project.update_model_directory(dep_model)
 
-        model["interpretation"] = self.interpret_model(model)
+        interpretation = self.interpret_model(model)
 
-        if save_to_yaml:
+        model["interpretation"] = interpretation
+
+        if write_documentation_to_yaml:
             self.__save_interpretation_to_yaml(model)
 
         self.dbt_project.update_model_directory(model)
+
+        return interpretation

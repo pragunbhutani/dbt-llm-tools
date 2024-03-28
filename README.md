@@ -5,7 +5,7 @@ Ragstar (inspired by `RAG & select *`) is set of LLM powered tools to elevate yo
 These tools include:
 
 - Chatbot: ask questions about data and get answers based on your dbt model documentation
-- Docbot: generate documentation for dbt models based on model and upstream model definition.
+- Documentation Generator: generate documentation for dbt models based on model and upstream model definition.
 
 ## Get Started
 
@@ -35,7 +35,7 @@ chatbot.load_models()
 
 # Step 2. Ask the chatbot a question
 response = chatbot.ask_question(
-	'How can I obtain the number of customers who upgraded to a paid plan in the last 3 months?'
+    'How can I obtain the number of customers who upgraded to a paid plan in the last 3 months?'
 )
 print(response)
 ```
@@ -52,21 +52,24 @@ Ragstar is based on the concept of Retrieval Augmented Generation and basically 
 - These models are then fed into ChatGPT as a prompt, along with some basic instructions and your question.
 - The response is returned to you as a string.
 
-## Basic Usage - Docbot
+## Basic Usage - Documentation Generator
 
-How to load your dbt project into the DocBot and have it write documentation for your models.
+How to load your dbt project into the Documentation Generator and have it write documentation for your models.
 
 ```Python
-from ragstar import Docbot
+from ragstar import DocumentationGenerator
 
-# Instantiate a docbot object
-bot = Docbot(
+# Instantiate a Documentation Generator object
+doc_gen = DocumentationGenerator(
     dbt_project_root="YOUR_DBT_PROJECT_PATH",
     openai_api_key="YOUR_OPENAI_API_KEY",
 )
 
-# Ask docbot to generate documentation for a model and all its upstream models
-bot.generate_documentation(model_name='dbt_model_name')
+# Generate documentation for a model and all its upstream models
+doc_gen.generate_documentation(
+    model_name='dbt_model_name',
+    write_documentation_to_yaml=False
+)
 ```
 
 ## Advanced Usage
