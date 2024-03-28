@@ -1,4 +1,4 @@
-INTERPRET_MODEL_INSTRUCTIONS = """
+INTERPRET_MODEL_INSTRUCTIONS = r"""
     You are a data analyst trying to understand the meaning and schema of a dbt model. 
     You will be provided with the name of the model and the Jinja SQL code that defines the model.
 
@@ -18,7 +18,7 @@ INTERPRET_MODEL_INSTRUCTIONS = """
     Your response should only contain an unformatted JSON string described above and nothing else.
 """
 
-ANSWER_QUESTION_INSTRUCTIONS = """
+ANSWER_QUESTION_INSTRUCTIONS = r"""
     You are a data analyst working with a data warehouse. You should provide the user with the information 
     they need to answer their question.
     

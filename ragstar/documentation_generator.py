@@ -2,16 +2,20 @@ import os
 import json
 import yaml
 
+from openai import OpenAI
+
 from ragstar.types import DbtModelDict, DbtModelDirectoryEntry, PromptMessage
 from ragstar.instructions import INTERPRET_MODEL_INSTRUCTIONS
 from ragstar.dbt_project import DbtProject
 
-from openai import OpenAI
 
+class MyDumper(yaml.Dumper):  # pylint: disable=too-many-ancestors
+    """
+    A custom yaml dumper that indents the yaml output like dbt does.
+    """
 
-class MyDumper(yaml.Dumper):
     def increase_indent(self, flow=False, indentless=False):
-        return super(MyDumper, self).increase_indent(flow, False)
+        return super().increase_indent(flow, False)
 
 
 class DocumentationGenerator:
@@ -32,8 +36,10 @@ class DocumentationGenerator:
         Args:
             dbt_project_root (str): Root of the dbt project
             openai_api_key (str): OpenAI API key
-            language_model (str, optional): The language model to use for generating documentation. Defaults to "gpt-4-turbo-preview".
-            database_path (str, optional): Path to the directory file that stores the parsed dbt project. Defaults to "./directory.json".
+            language_model (str, optional): The language model to use for generating documentation.
+            Defaults to "gpt-4-turbo-preview".
+            database_path (str, optional): Path to the directory file that stores the parsed dbt project.
+            Defaults to "./directory.json".
 
         Attributes:
             dbt_project (DbtProject): A DbtProject object representing the dbt project.
@@ -72,7 +78,8 @@ class DocumentationGenerator:
 
         Args:
             model (dict): The model to save the interpretation for.
-            overwrite_existing (bool, optional): Whether to overwrite the existing model yaml documentation if it exists. Defaults to False.
+            overwrite_existing (bool, optional): Whether to overwrite the existing model
+            yaml documentation if it exists. Defaults to False.
         """
         yaml_path = model.get("yaml_path")
 
@@ -82,7 +89,7 @@ class DocumentationGenerator:
                     f"Model already has documentation at {model['yaml_path']}"
                 )
 
-            with open(model["yaml_path"], "r") as infile:
+            with open(model["yaml_path"], "r", encoding="utf-8") as infile:
                 existing_yaml = yaml.load(infile, Loader=yaml.FullLoader)
                 existing_models = existing_yaml.get("models", [])
 
@@ -105,7 +112,7 @@ class DocumentationGenerator:
 
             yaml_content = {"version": 2, "models": [model["interpretation"]]}
 
-        with open(yaml_path, "w") as outfile:
+        with open(yaml_path, "w", encoding="utf-8") as outfile:
             yaml.dump(
                 yaml_content,
                 outfile,
@@ -186,7 +193,8 @@ class DocumentationGenerator:
 
         Args:
             model_name (str): The name of the model to generate documentation for.
-            write_documentation_to_yaml (bool, optional): Whether to save the documentation to a yaml file. Defaults to False.
+            write_documentation_to_yaml (bool, optional): Whether to save the documentation to a yaml file.
+            Defaults to False.
         """
         model = self.dbt_project.get_single_model(model_name)
 

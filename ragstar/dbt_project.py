@@ -1,16 +1,17 @@
 import os
 import glob
-import yaml
 import re
 import json
 
 from typing import Union
 
+import yaml
+
 from ragstar.types import DbtModelDirectoryEntry, DbtProjectDirectory
 from ragstar.dbt_model import DbtModel
 
-SOURCE_SEARCH_EXPRESSION = "source\(['\"]*(.*?)['\"]*?\)"
-REF_SEARCH_EXPRESSION = "ref\(['\"]*(.*?)['\"]*\)"
+SOURCE_SEARCH_EXPRESSION = r"source\(['\"]*(.*?)['\"]*?\)"
+REF_SEARCH_EXPRESSION = r"ref\(['\"]*(.*?)['\"]*\)"
 
 
 class DbtProject:
@@ -80,7 +81,7 @@ class DbtProject:
         return files
 
     def __find_upstream_references(
-        self, file_path: str, recursive: bool = False, dependencies: list[str] = []
+        self, file_path: str, recursive: bool = False, dependencies: list[str] = None
     ):
         """
         Find upstream references in a SQL file.
@@ -93,6 +94,9 @@ class DbtProject:
         Returns:
             list: A list of upstream references.
         """
+        if dependencies is None:
+            dependencies = []
+
         with open(file_path, encoding="utf-8") as f:
             file_contents = f.read()
 
@@ -214,16 +218,16 @@ class DbtProject:
             self.__yaml_files
         )
 
-        for model in documented_models.keys():
-            yaml_path = documented_models[model].pop("yaml_path")
+        for model_name, model_dict in documented_models.items():
+            yaml_path = model_dict.pop("yaml_path")
 
-            if model in source_sql_models:
-                source_sql_models[model]["yaml_path"] = yaml_path
-                source_sql_models[model]["documentation"] = documented_models[model]
+            if model_name in source_sql_models:
+                source_sql_models[model_name]["yaml_path"] = yaml_path
+                source_sql_models[model_name]["documentation"] = model_dict
             else:
-                source_sql_models[model] = {
+                source_sql_models[model_name] = {
                     "yaml_path": yaml_path,
-                    "documentation": documented_models[model],
+                    "documentation": model_dict,
                 }
 
         directory = {
@@ -287,7 +291,7 @@ class DbtProject:
                     searched_models.append(model)
 
         for excluded_folder in excluded_folders or []:
-            for model in searched_models:
+            for model in searched_models.copy():
                 if excluded_folder in model.get(
                     "absolute_path", ""
                 ) or excluded_folder in model.get("yaml_path", ""):
