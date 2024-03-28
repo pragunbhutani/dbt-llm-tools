@@ -2,6 +2,7 @@ import os
 import json
 import yaml
 
+from ragstar.types import DbtModelDict, DbtModelDirectoryEntry, PromptMessage
 from ragstar.instructions import INTERPRET_MODEL_INSTRUCTIONS
 from ragstar.dbt_project import DbtProject
 
@@ -19,7 +20,7 @@ class Docbot:
         openai_api_key: str,
         language_model: str = "gpt-4-turbo-preview",
         database_path: str = "./directory.json",
-    ):
+    ) -> None:
         """
         Initializes a Docbot object.
 
@@ -43,7 +44,7 @@ class Docbot:
         self.__language_model = language_model
         self.__client = OpenAI(api_key=openai_api_key)
 
-    def __get_system_prompt(self, message: str):
+    def __get_system_prompt(self, message: str) -> PromptMessage:
         """
         Get the system prompt for the language model.
 
@@ -59,8 +60,8 @@ class Docbot:
         }
 
     def __save_interpretation_to_yaml(
-        self, model: dict, overwrite_existing: bool = False
-    ):
+        self, model: DbtModelDict, overwrite_existing: bool = False
+    ) -> None:
         """
         Save the interpretation of a model to a yaml file.
 
@@ -102,7 +103,7 @@ class Docbot:
         with open(yaml_path, "w") as outfile:
             yaml.dump(yaml_content, outfile, default_flow_style=False, sort_keys=False)
 
-    def interpret_model(self, model: dict):
+    def interpret_model(self, model: DbtModelDirectoryEntry) -> DbtModelDict:
         """
         Interpret a dbt model using the large language model.
 
@@ -170,7 +171,9 @@ class Docbot:
 
         return json.loads(response)
 
-    def generate_documentation(self, model_name: str, save_to_yaml: bool = False):
+    def generate_documentation(
+        self, model_name: str, save_to_yaml: bool = False
+    ) -> None:
         """
         Generate documentation for a dbt model.
 

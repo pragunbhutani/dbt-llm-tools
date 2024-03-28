@@ -4,8 +4,10 @@ import yaml
 import re
 import json
 
+from typing import Union
+
+from ragstar.types import DbtModelDirectoryEntry, DbtProjectDirectory
 from ragstar.dbt_model import DbtModel
-from ragstar.instructions import INTERPRET_MODEL_INSTRUCTIONS
 
 SOURCE_SEARCH_EXPRESSION = "source\(['\"]*(.*?)['\"]*?\)"
 REF_SEARCH_EXPRESSION = "ref\(['\"]*(.*?)['\"]*\)"
@@ -152,12 +154,12 @@ class DbtProject:
         models = {}
         sources = {}
 
-        for yaml_file in yaml_files:
-            with open(yaml_file, encoding="utf-8") as f:
+        for yaml_path in yaml_files:
+            with open(yaml_path, encoding="utf-8") as f:
                 yaml_contents = yaml.safe_load(f)
 
             for model in yaml_contents.get("models", []):
-                model["yaml_file"] = yaml_file
+                model["yaml_path"] = yaml_path
 
                 parsed_columns = {}
                 for col in model.get("columns", []):
@@ -169,7 +171,7 @@ class DbtProject:
                 models[model["name"]] = model
 
             for source in yaml_contents.get("sources", []):
-                source["yaml_file"] = yaml_file
+                source["yaml_path"] = yaml_path
                 sources[source["name"]] = source
 
         return models, sources
@@ -194,7 +196,7 @@ class DbtProject:
         with open(self.__directory_path, "w", encoding="utf-8") as f:
             json.dump(directory, f, ensure_ascii=False, indent=4)
 
-    def parse(self):
+    def parse(self) -> DbtProjectDirectory:
         """
         Parse the dbt project and store details in a manifest file.
 
@@ -213,7 +215,7 @@ class DbtProject:
         )
 
         for model in documented_models.keys():
-            yaml_path = documented_models[model].pop("yaml_file")
+            yaml_path = documented_models[model].pop("yaml_path")
 
             if model in source_sql_models:
                 source_sql_models[model]["yaml_path"] = yaml_path
@@ -233,7 +235,7 @@ class DbtProject:
 
         return directory
 
-    def get_single_model(self, model_name):
+    def get_single_model(self, model_name: str) -> Union[DbtModelDirectoryEntry, None]:
         """
         Get a single model by name.
 

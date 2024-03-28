@@ -1,5 +1,3 @@
-import json
-
 from openai import OpenAI
 
 from ragstar.types import PromptMessage, ParsedSearchResult
@@ -177,7 +175,7 @@ class Chatbot:
         """
         self.store.reset_collection()
 
-    def ask_question(self, query: str, get_models_name_only: bool = False) -> str:
+    def ask_question(self, query: str, get_model_names_only: bool = False) -> str:
         """
         Ask the chatbot a question about your dbt models and get a response.
         The chatbot looks the dbt models most similar to the user query and uses them to answer the question.
@@ -195,7 +193,7 @@ class Chatbot:
         closest_models = self.store.query_collection(query)
         model_names = ", ".join(map(lambda x: x["id"], closest_models))
 
-        if get_models_name_only:
+        if get_model_names_only:
             return model_names
 
         print("Closest models found:", model_names)
@@ -204,107 +202,6 @@ class Chatbot:
         prompt = self.__prepare_prompt(closest_models, query)
 
         print("\nCalculating response...")
-        completion = self.client.chat.completions.create(
-            model=self.__chatbot_model,
-            messages=prompt,
-        )
-
-        print("\nResponse received: \n")
-        print(completion.choices[0].message.content)
-
-        return completion.choices[0].message
-
-    def interpret_model(
-        self,
-        model_name,
-        write_interpretation_to_yml=False,
-    ):
-        directory = self.project.get_directory()
-
-        if model_name is None:
-            raise Exception("No model name provided")
-
-        model = directory["models"].get(model_name)
-
-        if model is None:
-            raise Exception(f"No model found with name {model_name}")
-
-        refs = model.get("refs", [])
-
-        for ref in refs:
-            ref_model = directory["models"].get(ref)
-
-            if ref_model.get("interpretation") is None:
-                self.interpret_model(ref)
-
-        prompt = []
-
-        print("Preparing prompt...")
-
-        prompt.append(
-            {
-                "role": "system",
-                "content": """
-                You are a data analyst trying to understand the meaning and schema of a dbt model. 
-                You will be provided with the name of the model and the Jinja SQL code that defines the model.
-
-                The Jinja files may contain references to other models, using the \{\{ ref('model_name') \}\} syntax,
-                or references to source tables using the \{\{ source('schema_name', 'table_name') \}\} syntax.
-                
-                The interpretation for all upstream models will be provided to you in the form of a 
-                JSON object that contains the following keys: model, description, columns.
-
-                A source table is a table that is not defined in the dbt project, but is instead a table that is present in the data warehouse.
-
-                Your response should be in the form of a JSON object that contains the following keys: model, description, columns.
-
-                The columns key should contain a list of JSON objects, each of which should contain 
-                the following keys: name, description & accepted_values.
-
-                Your response should only contain the JSON object described above and nothing else.
-            """,
-            }
-        )
-
-        prompt.append(
-            {
-                "role": "system",
-                "content": f"""
-                The model you are interpreting is called {model_name}  following is the Jinja SQL code for the model:
-
-                {model.get("sql_contents")}
-                """,
-            }
-        )
-
-        if len(refs) > 0:
-            prompt.append(
-                {
-                    "role": "system",
-                    "content": f"""
-                    The model {model_name} references the following models: {", ".join(refs)}.
-                    
-                    The interpretation for each of these models is as follows:
-                    """,
-                }
-            )
-
-            for ref in refs:
-                ref_model = directory["models"].get(ref)
-
-                prompt.append(
-                    {
-                        "role": "system",
-                        "content": f"""
-                        The model {ref} is interpreted as follows:
-                        {json.dumps(ref_model.get("interpretation"), indent=4)}
-                        """,
-                    }
-                )
-
-        print(prompt)
-
-        print("\nInterpreting model...")
         completion = self.client.chat.completions.create(
             model=self.__chatbot_model,
             messages=prompt,
