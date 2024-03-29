@@ -34,7 +34,6 @@ setup(
     install_requires=[
         "pyyaml",
         "typing_extensions",
-        "tinydb",
         "chromadb",
         "openai",
         "pylint",
