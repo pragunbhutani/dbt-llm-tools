@@ -2,6 +2,7 @@ from openai import OpenAI
 
 from ragstar.types import PromptMessage, ParsedSearchResult
 
+from ragstar.instructions import ANSWER_QUESTION_INSTRUCTIONS
 from ragstar.dbt_project import DbtProject
 from ragstar.vector_store import VectorStore
 
@@ -30,7 +31,8 @@ class Chatbot:
         openai_api_key: str,
         embedding_model: str = "text-embedding-3-large",
         chatbot_model: str = "gpt-4-turbo-preview",
-        db_persist_path: str = "./chroma.db",
+        vector_db_path: str = "./database/chroma.db",
+        database_path: str = "./database/directory.json",
     ) -> None:
         """
         Initializes a chatbot object along with a default set of instructions.
@@ -53,30 +55,17 @@ class Chatbot:
         self.__chatbot_model: str = chatbot_model
         self.__openai_api_key: str = openai_api_key
 
-        self.project: DbtProject = DbtProject(dbt_project_root)
-        self.store: VectorStore = VectorStore(
-            openai_api_key, embedding_model, db_persist_path
+        self.project: DbtProject = DbtProject(
+            dbt_project_root=dbt_project_root, database_path=database_path
         )
 
-        self.__instructions: list[str] = [
-            "You are a data analyst working with a data warehouse.",
-            "You should provide the user with the information they need to answer their question.",
-            "You should only provide information that you are confident is correct.",
-            "When you are not sure about the answer, you should let the user know.",
-            "If you are able to construct a SQL query that would answer the user's question, you should do so.",
-            "However please refrain from doing so if the user's question is ambiguous or unclear.",
-            "When writing a SQL query, you should only use column values if these values have been explicitly"
-            + " provided to you in the information you have been given.",
-            "Do not write a SQL query if you are unsure about the correctness of the query or"
-            + " about the values contained in the columns.",
-            "Only write a SQL query if you are confident that the query is exhaustive"
-            + " and that it will return the correct results.",
-            "If it is not possible to write a SQL that fulfils these conditions, you should instead respond"
-            + " with the names of the tables or columns that you think are relevant to the user's question.",
-            "You should also refrain from providing any information that is not directly related to the"
-            + " user's question or that which cannot be inferred from the information you have been given.",
-            "The following information about tables and columns is available to you:",
-        ]
+        self.store: VectorStore = VectorStore(
+            openai_api_key, embedding_model, vector_db_path
+        )
+
+        self.client = OpenAI(api_key=self.__openai_api_key)
+
+        self.__instructions: list[str] = [ANSWER_QUESTION_INSTRUCTIONS]
 
     def __prepare_prompt(
         self, closest_models: list[ParsedSearchResult], query: str
@@ -186,7 +175,7 @@ class Chatbot:
         """
         self.store.reset_collection()
 
-    def ask_question(self, query: str, get_models_name_only: bool = False) -> str:
+    def ask_question(self, query: str, get_model_names_only: bool = False) -> str:
         """
         Ask the chatbot a question about your dbt models and get a response.
         The chatbot looks the dbt models most similar to the user query and uses them to answer the question.
@@ -204,7 +193,7 @@ class Chatbot:
         closest_models = self.store.query_collection(query)
         model_names = ", ".join(map(lambda x: x["id"], closest_models))
 
-        if get_models_name_only:
+        if get_model_names_only:
             return model_names
 
         print("Closest models found:", model_names)
@@ -212,10 +201,8 @@ class Chatbot:
         print("\nPreparing prompt...")
         prompt = self.__prepare_prompt(closest_models, query)
 
-        client = OpenAI(api_key=self.__openai_api_key)
-
         print("\nCalculating response...")
-        completion = client.chat.completions.create(
+        completion = self.client.chat.completions.create(
             model=self.__chatbot_model,
             messages=prompt,
         )

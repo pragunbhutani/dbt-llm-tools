@@ -5,6 +5,7 @@ from ragstar import DbtProject, DbtModel
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 VALID_PROJECT_PATH = os.path.join(HERE, "test_data/valid_dbt_project")
+DATABASE_PATH = os.path.join(HERE, "test_data/directory.json")
 
 
 class DbtProjectTestCase(unittest.TestCase):
@@ -23,7 +24,10 @@ class DbtProjectTestCase(unittest.TestCase):
         """
         Test for the case when the class is constructed with a valid project root.
         """
-        project = DbtProject(VALID_PROJECT_PATH)
+        project = DbtProject(
+            VALID_PROJECT_PATH,
+            database_path=DATABASE_PATH,
+        )
 
         self.assertIsInstance(project, DbtProject)
 
@@ -31,7 +35,10 @@ class DbtProjectTestCase(unittest.TestCase):
         """
         Test for the case when we want to get all the models in the project.
         """
-        project = DbtProject(VALID_PROJECT_PATH)
+        project = DbtProject(
+            VALID_PROJECT_PATH,
+            database_path=DATABASE_PATH,
+        )
         models = project.get_models()
 
         self.assertEqual(len(models), 5)
@@ -40,7 +47,10 @@ class DbtProjectTestCase(unittest.TestCase):
         """
         Test for the case when we want to get all the models in one/many specific folder(s).
         """
-        project = DbtProject(VALID_PROJECT_PATH)
+        project = DbtProject(
+            VALID_PROJECT_PATH,
+            database_path=DATABASE_PATH,
+        )
         models = project.get_models(
             included_folders=["models/staging", "models/intermediate"]
         )
@@ -59,7 +69,10 @@ class DbtProjectTestCase(unittest.TestCase):
         Test for the case when we want to get all the models in the project,
         except for those in one/many specific folder(s).
         """
-        project = DbtProject(VALID_PROJECT_PATH)
+        project = DbtProject(
+            VALID_PROJECT_PATH,
+            database_path=DATABASE_PATH,
+        )
         models = project.get_models(excluded_folders=["models/intermediate"])
 
         self.assertEqual(len(models), 4)
@@ -70,7 +83,10 @@ class DbtProjectTestCase(unittest.TestCase):
         """
         Test for the case when we want to get only specific models by name.
         """
-        project = DbtProject(VALID_PROJECT_PATH)
+        project = DbtProject(
+            VALID_PROJECT_PATH,
+            database_path=DATABASE_PATH,
+        )
         models = project.get_models(models=["staging_1", "staging_2"])
 
         self.assertEqual(len(models), 2)
