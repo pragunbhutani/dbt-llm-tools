@@ -1,6 +1,6 @@
-==============
-Vector Store
-==============
+=======================
+VectorStore
+=======================
 
 .. currentmodule:: ragstar.vector_store
 

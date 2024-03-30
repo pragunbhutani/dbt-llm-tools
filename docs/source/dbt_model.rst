@@ -1,6 +1,6 @@
-==============
-DBT Model
-==============
+=======================
+DbtModel
+=======================
 
 .. currentmodule:: ragstar.dbt_model
 

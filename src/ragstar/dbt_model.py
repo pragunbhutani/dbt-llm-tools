@@ -7,10 +7,12 @@ class DbtModel:
     A class representing a dbt model.
 
     Attributes:
-        name (str): The name of the model.
-        description (str, optional): The description of the model.
-        columns (list[DbtModelColumn], optional): A list of columns contained in the model.
-        May or may not be exhaustive.
+        name (str):
+            The name of the model.
+        description (str, optional):
+            The description of the model.
+        columns (list[DbtModelColumn], optional):
+            A list of columns contained in the model. May or may not be exhaustive.
     """
 
     def __init__(self, model_dict: DbtModelDict) -> None:

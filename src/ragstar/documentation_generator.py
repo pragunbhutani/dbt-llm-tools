@@ -36,10 +36,12 @@ class DocumentationGenerator:
         Args:
             dbt_project_root (str): Root of the dbt project
             openai_api_key (str): OpenAI API key
-            language_model (str, optional): The language model to use for generating documentation.
-            Defaults to "gpt-4-turbo-preview".
-            database_path (str, optional): Path to the directory file that stores the parsed dbt project.
-            Defaults to "./directory.json".
+            language_model (str, optional):
+                The language model to use for generating documentation.
+                Defaults to "gpt-4-turbo-preview".
+            database_path (str, optional):
+                Path to the directory file that stores the parsed dbt project.
+                Defaults to "./directory.json".
 
         Attributes:
             dbt_project (DbtProject): A DbtProject object representing the dbt project.
@@ -193,8 +195,9 @@ class DocumentationGenerator:
 
         Args:
             model_name (str): The name of the model to generate documentation for.
-            write_documentation_to_yaml (bool, optional): Whether to save the documentation to a yaml file.
-            Defaults to False.
+            write_documentation_to_yaml (bool, optional):
+                Whether to save the documentation to a yaml file.
+                Defaults to False.
         """
         model = self.dbt_project.get_single_model(model_name)
 

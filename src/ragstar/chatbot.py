@@ -10,19 +10,6 @@ from ragstar.vector_store import VectorStore
 class Chatbot:
     """
     A class representing a chatbot that allows users to ask questions about dbt models.
-
-    Attributes:
-        project (DbtProject): The dbt project being used by the chatbot.
-        store (VectorStore): The vector store being used by the chatbot.
-
-    Methods:
-        set_embedding_model: Set the embedding model for the vector store.
-        set_chatbot_model: Set the chatbot model for the chatbot.
-        get_instructions: Get the instructions for the chatbot.
-        set_instructions: Set the instructions for the chatbot.
-        load_models: Load the models into the vector store.
-        reset_model_db: Reset the model vector store.
-        ask_question: Ask the chatbot a question and get a response.
     """
 
     def __init__(
@@ -38,16 +25,20 @@ class Chatbot:
         Initializes a chatbot object along with a default set of instructions.
 
         Args:
-            dbt_project_root (str): The absolute path to the root of the dbt project.
-            openai_api_key (str): Your OpenAI API key.
+            dbt_project_root (str):
+                The absolute path to the root of the dbt project.
+            openai_api_key (str):
+                Your OpenAI API key.
+            embedding_model (str, optional):
+                The name of the OpenAI embedding model to be used.
+                Defaults to "text-embedding-3-large".
 
-            embedding_model (str, optional): The name of the OpenAI embedding model to be used.
-            Defaults to "text-embedding-3-large".
+            chatbot_model (str, optional):
+                The name of the OpenAI chatbot model to be used.
+                Defaults to "gpt-4-turbo-preview".
 
-            chatbot_model (str, optional): The name of the OpenAI chatbot model to be used.
-            Defaults to "gpt-4-turbo-preview".
-
-            db_persist_path (str, optional): The path to the persistent database file. Defaults to "./chroma.db".
+            db_persist_path (str, optional):
+                The path to the persistent database file. Defaults to "./chroma.db".
 
         Returns:
             None

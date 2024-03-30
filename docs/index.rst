@@ -1,19 +1,34 @@
-.. Ragstar documentation master file, created by
-   sphinx-quickstart on Sun Feb 11 16:57:36 2024.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+=======
+ragstar
+=======
 
-Welcome to Ragstar's documentation!
-===================================
+This is the documentation of **ragstar**.
+
+Index
+========
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :maxdepth: 1
 
-   source/api/chatbot
-   source/api/vector_store
-   source/api/dbt_project
-   source/api/dbt_model
+   overview
+   contributing
+   license
+   authors
+   changelog
+
+
+Classes
+========
+
+.. toctree::
+   :maxdepth: 1
+
+   source/chatbot
+   source/documentation_generator
+   source/vector_store
+   source/dbt_project
+   source/dbt_model
+
 
 Indices and tables
 ==================

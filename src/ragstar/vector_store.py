@@ -10,11 +10,6 @@ from ragstar.dbt_model import DbtModel
 class VectorStore:
     """
     A class representing a vector store for dbt models.
-
-    Methods:
-        get_client: Returns the client object for the vector store.
-        upsert_models: Upsert the models into the vector store.
-        reset_collection: Clear the collection of all documents.
     """
 
     def __init__(

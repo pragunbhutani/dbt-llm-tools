@@ -1,6 +1,6 @@
-==============
-DBT Project
-==============
+=======================
+DbtProject
+=======================
 
 .. currentmodule:: ragstar.dbt_project
 
