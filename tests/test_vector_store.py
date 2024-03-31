@@ -1,14 +1,14 @@
 import unittest
 
-from test.test_data.model_examples import (
+from tests.test_data.model_examples import (
     INVALID_MODEL,
     MODEL_WITH_ONLY_NAME,
     MODEL_WITH_NAME_AND_DESCRIPTION,
     MODEL_WITH_NAME_DESCRIPTION_AND_COLUMNS,
 )
 
-from ragstar import DbtModel
-from ragstar import VectorStore
+from src.ragstar import DbtModel
+from src.ragstar import VectorStore
 
 
 class VectorStoreTestCase(unittest.TestCase):

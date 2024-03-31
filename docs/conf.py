@@ -1,3 +1,5 @@
+# pylint: skip-file
+
 # This file is execfile()d with the current directory set to its containing dir.
 #
 # This file only contains a selection of the most common options. For a full

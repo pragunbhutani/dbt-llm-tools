@@ -41,8 +41,13 @@ jobs:
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
-          REPOSITORY_URL: ${{ vars.REPOSITORY_URL }}
+          TWINE_REPOSITORY_URL: ${{ vars.REPOSITORY_URL }}
+          TWINE_REPOSITORY: $${{ vars.TWINE_REPOSITORY }}
         run: |
-          python setup.py sdist bdist_wheel
-          echo $REPORSITORY_URL
-          twine upload --repository-url $REPOSITORY_URL dist/*
+          python -m pip install --upgrade pip setuptools tox
+          python -m tox -e clean,build
+          python -m tox -e publish -- --verbose
+
+# python setup.py sdist bdist_wheel
+# echo $REPORSITORY_URL
+# twine upload --repository-url $REPOSITORY_URL dist/*

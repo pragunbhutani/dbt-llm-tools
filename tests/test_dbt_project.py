@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from ragstar import DbtProject, DbtModel
+from src.ragstar import DbtProject, DbtModel
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 VALID_PROJECT_PATH = os.path.join(HERE, "test_data/valid_dbt_project")
