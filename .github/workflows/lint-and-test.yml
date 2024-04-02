@@ -28,7 +28,7 @@ jobs:
           cache: "poetry"
 
       - name: Install dev dependencies
-        run: poetry install --only dev
+        run: poetry install
 
       - name: Lint with Flake8
         run: poetry run flake8 dbt_llm_tools tests
