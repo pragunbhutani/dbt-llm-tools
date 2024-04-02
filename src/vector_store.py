@@ -3,8 +3,8 @@ import json
 import chromadb
 from chromadb.utils import embedding_functions
 
-from ragstar.types import ParsedSearchResult
-from ragstar.dbt_model import DbtModel
+from src.dbt_model import DbtModel
+from src.types import ParsedSearchResult
 
 
 class VectorStore:

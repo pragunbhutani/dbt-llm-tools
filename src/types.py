@@ -1,4 +1,5 @@
 from typing import TypedDict, Union
+
 from typing_extensions import NotRequired
 
 

@@ -1,16 +1,15 @@
 import unittest
 
-from test.test_data.model_examples import (
+from src import DbtModel
+from tests.test_data.model_examples import (
     INVALID_MODEL,
-    MODEL_WITH_ONLY_NAME,
     MODEL_WITH_NAME_AND_DESCRIPTION,
-    MODEL_WITH_NAME_DESCRIPTION_AND_COLUMNS,
-    MODEL_WITH_ONLY_NAME_PROMPT_TEXT,
     MODEL_WITH_NAME_AND_DESCRIPTION_PROMPT_TEXT,
+    MODEL_WITH_NAME_DESCRIPTION_AND_COLUMNS,
     MODEL_WITH_NAME_DESCRIPTION_AND_COLUMNS_PROMPT_TEXT,
+    MODEL_WITH_ONLY_NAME,
+    MODEL_WITH_ONLY_NAME_PROMPT_TEXT,
 )
-
-from ragstar import DbtModel
 
 
 class DbtModelTestCase(unittest.TestCase):

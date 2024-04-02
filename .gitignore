@@ -197,9 +197,12 @@ pyrightconfig.json
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode
 
 ### Vector Store Instances ###
-chroma.db
+**/**chroma.db
 test_chroma.db
 .database/*
 
 ### Mac
 .DS_Store
+
+# Sphinx documentation
+docs/_build/

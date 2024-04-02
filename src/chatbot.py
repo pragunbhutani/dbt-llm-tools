@@ -1,10 +1,9 @@
 from openai import OpenAI
 
-from ragstar.types import PromptMessage, ParsedSearchResult
-
-from ragstar.instructions import ANSWER_QUESTION_INSTRUCTIONS
-from ragstar.dbt_project import DbtProject
-from ragstar.vector_store import VectorStore
+from src.dbt_project import DbtProject
+from src.instructions import ANSWER_QUESTION_INSTRUCTIONS
+from src.types import ParsedSearchResult, PromptMessage
+from src.vector_store import VectorStore
 
 
 class Chatbot:
