@@ -1,5 +1,6 @@
 from typing import Callable
-from ragstar.types import DbtModelDict
+
+from dbt_llm_tools.types import DbtModelDict
 
 
 class DbtModel:

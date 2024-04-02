@@ -1,12 +1,12 @@
-import os
 import json
-import yaml
+import os
 
+import yaml
 from openai import OpenAI
 
-from ragstar.types import DbtModelDict, DbtModelDirectoryEntry, PromptMessage
-from ragstar.instructions import INTERPRET_MODEL_INSTRUCTIONS
-from ragstar.dbt_project import DbtProject
+from dbt_llm_tools.dbt_project import DbtProject
+from dbt_llm_tools.instructions import INTERPRET_MODEL_INSTRUCTIONS
+from dbt_llm_tools.types import DbtModelDict, DbtModelDirectoryEntry, PromptMessage
 
 
 class MyDumper(yaml.Dumper):  # pylint: disable=too-many-ancestors
@@ -153,7 +153,7 @@ class DocumentationGenerator:
                 self.__get_system_prompt(
                     f"""
 
-                    The model {model["name"]} references the following models: {", ".join(refs)}.               
+                    The model {model["name"]} references the following models: {", ".join(refs)}.
                     The interpretation for each of these models is as follows:
                     """
                 )

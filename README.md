@@ -1,8 +1,8 @@
-# Ragstar - LLM Tools for DBT Projects
+# dbt-llm-tools
 
-Ragstar (inspired by `RAG & select *`) is set of LLM powered tools to elevate your dbt projects and supercharge your data team.
+LLM based tools for dbt projects. Answer data questions, generate documentation and more.
 
-These tools include:
+Currently Includes:
 
 - Chatbot: ask questions about data and get answers based on your dbt model documentation
 - Documentation Generator: generate documentation for dbt models based on model and upstream model definition.
@@ -11,10 +11,10 @@ These tools include:
 
 ### Installation
 
-Ragstar can be installed via pip.
+dbt-llm-tools can be installed via pip.
 
 ```
-pip install ragstar
+pip install dbt-llm-tools
 ```
 
 ## Basic Usage - Chatbot
@@ -22,7 +22,7 @@ pip install ragstar
 How to load your dbt project into the Chatbot and ask questions about your data.
 
 ```Python
-from ragstar import Chatbot
+from dbt_llm_tools import Chatbot
 
 # Instantiate a chatbot object
 chatbot = Chatbot(
@@ -40,14 +40,14 @@ response = chatbot.ask_question(
 print(response)
 ```
 
-**Note**: Ragstar currently only supports OpenAI ChatGPT models for generating embeddings and responses to queries.
+**Note**: dbt-llm-tools currently only supports OpenAI ChatGPT models for generating embeddings and responses to queries.
 
 ### How it works
 
-Ragstar is based on the concept of Retrieval Augmented Generation and basically works as follows:
+The Chatbot is based on the concept of Retrieval Augmented Generation and basically works as follows:
 
-- When you call the `chatbot.load_models()` method, Ragstar scans all the folders in the locations specified by you for dbt YML files.
-- It then converts all the models into a text description, which are stored as embeddings in a vector database. Ragstar currently only supports [ChromaDB](https://www.trychroma.com/) as a vector db, which is persisted in a file on your local machine.
+- When you call the `chatbot.load_models()` method, the bot scans all the folders in the locations specified by you for dbt YML files.
+- It then converts all the models into a text description, which are stored as embeddings in a vector database. The bot currently only supports [ChromaDB](https://www.trychroma.com/) as a vector db, which is persisted in a file on your local machine.
 - When you ask a query, it fetches 3 models whose description is found to be the most relevant for your query.
 - These models are then fed into ChatGPT as a prompt, along with some basic instructions and your question.
 - The response is returned to you as a string.
@@ -57,7 +57,7 @@ Ragstar is based on the concept of Retrieval Augmented Generation and basically 
 How to load your dbt project into the Documentation Generator and have it write documentation for your models.
 
 ```Python
-from ragstar import DocumentationGenerator
+from dbt_llm_tools import DocumentationGenerator
 
 # Instantiate a Documentation Generator object
 doc_gen = DocumentationGenerator(

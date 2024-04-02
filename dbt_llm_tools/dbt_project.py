@@ -1,14 +1,13 @@
-import os
 import glob
-import re
 import json
-
+import os
+import re
 from typing import Union
 
 import yaml
 
-from ragstar.types import DbtModelDirectoryEntry, DbtProjectDirectory
-from ragstar.dbt_model import DbtModel
+from dbt_llm_tools.dbt_model import DbtModel
+from dbt_llm_tools.types import DbtModelDirectoryEntry, DbtProjectDirectory
 
 SOURCE_SEARCH_EXPRESSION = r"source\(['\"]*(.*?)['\"]*?\)"
 REF_SEARCH_EXPRESSION = r"ref\(['\"]*(.*?)['\"]*\)"

@@ -1,8 +1,0 @@
-[FORMAT]
-max-line-length=120
-
-disable=
-    missing-module-docstring,
-    too-many-arguments,
-    too-few-public-methods,
-    broad-exception-raised
