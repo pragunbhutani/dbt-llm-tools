@@ -82,7 +82,9 @@ docs/_templates/
 target/
 
 # Jupyter Notebook
-.ipynb_checkpoints
+**/*.ipynb_checkpoints
+**/*.ipynb
+notebooks/*
 
 # IPython
 profile_default/
