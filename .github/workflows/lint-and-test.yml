@@ -1,8 +1,10 @@
 name: Lint and Test
 
 on:
-  pull_request:
-    types: [opened, reopened]
+  push:
+    branches:
+      - main
+  pull_request: {}
 
 permissions:
   contents: read
