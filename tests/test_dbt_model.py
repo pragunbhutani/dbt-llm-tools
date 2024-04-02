@@ -1,6 +1,6 @@
 import unittest
 
-from src import DbtModel
+from dbt_llm_tools import DbtModel
 from tests.test_data.model_examples import (
     INVALID_MODEL,
     MODEL_WITH_NAME_AND_DESCRIPTION,

@@ -1,6 +1,6 @@
 import unittest
 
-from src import DbtModel, VectorStore
+from dbt_llm_tools import DbtModel, VectorStore
 from tests.test_data.model_examples import (
     INVALID_MODEL,
     MODEL_WITH_NAME_AND_DESCRIPTION,

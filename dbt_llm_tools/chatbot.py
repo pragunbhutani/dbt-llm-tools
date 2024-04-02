@@ -1,9 +1,9 @@
 from openai import OpenAI
 
-from src.dbt_project import DbtProject
-from src.instructions import ANSWER_QUESTION_INSTRUCTIONS
-from src.types import ParsedSearchResult, PromptMessage
-from src.vector_store import VectorStore
+from dbt_llm_tools.dbt_project import DbtProject
+from dbt_llm_tools.instructions import ANSWER_QUESTION_INSTRUCTIONS
+from dbt_llm_tools.types import ParsedSearchResult, PromptMessage
+from dbt_llm_tools.vector_store import VectorStore
 
 
 class Chatbot:

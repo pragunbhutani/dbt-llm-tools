@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "dbt-llm-toolkit"
+name = "dbt_llm_tools"
 version = "0.1.0"
 description = "LLM based tools for dbt projects. Answer data questions, generate documentation and more."
 authors = [
@@ -7,7 +7,7 @@ authors = [
 ]
 license = "MIT"
 readme = "README.md"
-repository = "https://github.com/pragunbhutani/dbt-llm-toolkit"
+repository = "https://github.com/pragunbhutani/dbt-llm-tools"
 keywords = ["dbt", "openai", "llm", "data chatbot", "dbt documentation"]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
@@ -21,7 +21,7 @@ classifiers = [
 ]
 
 packages = [
-    { include = "src" },
+    { include = "dbt_llm_tools" },
 ]
 
 [tool.poetry.dependencies]

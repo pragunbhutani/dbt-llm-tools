@@ -4,9 +4,9 @@ import os
 import yaml
 from openai import OpenAI
 
-from src.dbt_project import DbtProject
-from src.instructions import INTERPRET_MODEL_INSTRUCTIONS
-from src.types import DbtModelDict, DbtModelDirectoryEntry, PromptMessage
+from dbt_llm_tools.dbt_project import DbtProject
+from dbt_llm_tools.instructions import INTERPRET_MODEL_INSTRUCTIONS
+from dbt_llm_tools.types import DbtModelDict, DbtModelDirectoryEntry, PromptMessage
 
 
 class MyDumper(yaml.Dumper):  # pylint: disable=too-many-ancestors
