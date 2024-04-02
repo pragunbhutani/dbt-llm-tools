@@ -49,6 +49,15 @@ per-file-ignores = """
     __init__.py: F401
 """
 
+[tool.pylint.'MESSAGES CONTROL']
+max-line-length=120
+disable = """
+    missing-module-docstring,
+    too-many-arguments,
+    too-few-public-methods,
+    broad-exception-raised
+"""
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
