@@ -1,0 +1,4 @@
+hooks:
+  - id: poetry-export
+    args: ["-f", "requirements.txt", "-o", "requirements-docs.txt"]
+    verbose: true
