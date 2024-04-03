@@ -2,8 +2,8 @@
 DBT Project
 ==============
 
-.. currentmodule:: ragstar.dbt_project
+.. currentmodule:: dbt_llm_tools.dbt_project
 
 .. Don't include inherited members to keep the doc short
-.. autoclass:: ragstar.DbtProject
+.. autoclass:: dbt_llm_tools.DbtProject
     :members:

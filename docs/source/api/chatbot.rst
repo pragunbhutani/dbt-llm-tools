@@ -2,8 +2,8 @@
 Chatbot
 ==============
 
-.. currentmodule:: ragstar.chatbot
+.. currentmodule:: dbt_llm_tools.chatbot
 
 .. Don't include inherited members to keep the doc short
-.. autoclass:: ragstar.Chatbot
+.. autoclass:: dbt_llm_tools.Chatbot
     :members:
