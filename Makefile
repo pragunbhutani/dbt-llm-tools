@@ -3,7 +3,7 @@
 #
 # Shortcuts for various tasks.
 
-docs:
+documentation:
 	@(poetry export -f requirements.txt -o requirements-docs.txt; cd docs; make html)
 
 test:
