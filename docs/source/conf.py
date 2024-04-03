@@ -4,7 +4,7 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath(".."))
+sys.path.insert(0, os.path.abspath("../.."))
 
 # Configuration file for the Sphinx documentation builder.
 #
@@ -14,7 +14,7 @@ sys.path.insert(0, os.path.abspath(".."))
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "Ragstar"
+project = "dbt-llm-tools"
 copyright = "2024, Pragun Bhutani"
 author = "Pragun Bhutani"
 
@@ -31,4 +31,8 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = "sphinx_rtd_theme"
+# html_theme = "default"
 html_static_path = ["_static"]
+
+# Use the old sphinx default theme on RTFD
+# RTD_OLD_THEME = True

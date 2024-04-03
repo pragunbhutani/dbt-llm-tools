@@ -2,8 +2,8 @@
 Vector Store
 ==============
 
-.. currentmodule:: ragstar.vector_store
+.. currentmodule:: dbt_llm_tools.vector_store
 
 .. Don't include inherited members to keep the doc short
-.. autoclass:: ragstar.VectorStore
+.. autoclass:: dbt_llm_tools.VectorStore
     :members:

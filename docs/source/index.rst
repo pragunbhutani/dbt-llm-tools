@@ -3,17 +3,17 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Ragstar's documentation!
+dbt-llm-tools documentation
 ===================================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   source/api/chatbot
-   source/api/vector_store
-   source/api/dbt_project
-   source/api/dbt_model
+   api/chatbot
+   api/vector_store
+   api/dbt_project
+   api/dbt_model
 
 Indices and tables
 ==================
