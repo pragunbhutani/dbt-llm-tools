@@ -1,84 +1,78 @@
 {
-    "models": {
-        "model_2": {
-            "yaml_path": "/Users/pragunbhutani/Code/ragstar/test/test_data/valid_dbt_project/models/model_2.yml",
-            "documentation": {
-                "name": "model_2",
-                "description": "model_2_description",
-                "columns": {
-                    "col_1": {
-                        "description": "col_1_description"
-                    },
-                    "col_2": {}
-                }
-            }
-        },
-        "model_1": {
-            "yaml_path": "/Users/pragunbhutani/Code/ragstar/test/test_data/valid_dbt_project/models/model_1.yml",
-            "documentation": {
-                "name": "model_1",
-                "description": "model_1_description",
-                "columns": {
-                    "col_1": {
-                        "description": "col_1_description"
-                    },
-                    "col_2": {
-                        "description": "col_2_description"
-                    }
-                }
-            }
-        },
-        "staging_1": {
-            "yaml_path": "/Users/pragunbhutani/Code/ragstar/test/test_data/valid_dbt_project/models/staging/schema.yml",
-            "documentation": {
-                "name": "staging_1",
-                "columns": {
-                    "col_1": {
-                        "tests": [
-                            "unique",
-                            "not_null"
-                        ]
-                    }
-                }
-            }
-        },
-        "staging_2": {
-            "yaml_path": "/Users/pragunbhutani/Code/ragstar/test/test_data/valid_dbt_project/models/staging/schema.yml",
-            "documentation": {
-                "name": "staging_2",
-                "columns": {
-                    "col_with_description": {
-                        "description": "col_with_description_description",
-                        "tests": [
-                            "unique",
-                            "not_null"
-                        ]
-                    },
-                    "col_without_description": {
-                        "tests": [
-                            {
-                                "accepted_values": {
-                                    "values": [
-                                        "placed",
-                                        "shipped",
-                                        "completed",
-                                        "return_pending",
-                                        "returned"
-                                    ]
-                                }
-                            }
-                        ]
-                    }
-                }
-            }
-        },
-        "intermediate_1": {
-            "yaml_path": "/Users/pragunbhutani/Code/ragstar/test/test_data/valid_dbt_project/models/intermediate/schema.yml",
-            "documentation": {
-                "name": "intermediate_1",
-                "columns": {}
-            }
+  "models": {
+    "model_2": {
+      "yaml_path": "/Users/pragunbhutani/Code/dbt-llm-tools/test/test_data/valid_dbt_project/models/model_2.yml",
+      "documentation": {
+        "name": "model_2",
+        "description": "model_2_description",
+        "columns": {
+          "col_1": {
+            "description": "col_1_description"
+          },
+          "col_2": {}
         }
+      }
     },
-    "sources": {}
+    "model_1": {
+      "yaml_path": "/Users/pragunbhutani/Code/dbt-llm-tools/test/test_data/valid_dbt_project/models/model_1.yml",
+      "documentation": {
+        "name": "model_1",
+        "description": "model_1_description",
+        "columns": {
+          "col_1": {
+            "description": "col_1_description"
+          },
+          "col_2": {
+            "description": "col_2_description"
+          }
+        }
+      }
+    },
+    "staging_1": {
+      "yaml_path": "/Users/pragunbhutani/Code/dbt-llm-tools/test/test_data/valid_dbt_project/models/staging/schema.yml",
+      "documentation": {
+        "name": "staging_1",
+        "columns": {
+          "col_1": {
+            "tests": ["unique", "not_null"]
+          }
+        }
+      }
+    },
+    "staging_2": {
+      "yaml_path": "/Users/pragunbhutani/Code/dbt-llm-tools/test/test_data/valid_dbt_project/models/staging/schema.yml",
+      "documentation": {
+        "name": "staging_2",
+        "columns": {
+          "col_with_description": {
+            "description": "col_with_description_description",
+            "tests": ["unique", "not_null"]
+          },
+          "col_without_description": {
+            "tests": [
+              {
+                "accepted_values": {
+                  "values": [
+                    "placed",
+                    "shipped",
+                    "completed",
+                    "return_pending",
+                    "returned"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "intermediate_1": {
+      "yaml_path": "/Users/pragunbhutani/Code/dbt-llm-tools/test/test_data/valid_dbt_project/models/intermediate/schema.yml",
+      "documentation": {
+        "name": "intermediate_1",
+        "columns": {}
+      }
+    }
+  },
+  "sources": {}
 }
