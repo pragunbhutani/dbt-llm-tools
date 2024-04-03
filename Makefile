@@ -4,7 +4,7 @@
 # Shortcuts for various tasks.
 
 documentation:
-	@(poetry export -f requirements.txt -o requirements-docs.txt; cd docs; make html)
+	@(poetry export --with docs -f requirements.txt -o requirements-docs.txt; cd docs; make html)
 
 test:
 	poetry run pytest
