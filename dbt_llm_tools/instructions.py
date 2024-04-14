@@ -39,6 +39,4 @@ ANSWER_QUESTION_INSTRUCTIONS = r"""
 
     You should also refrain from providing any information that is not directly related to the user's question or that
     which cannot be inferred from the information you have been given.
-
-    The following information about tables and columns is available to you:
 """

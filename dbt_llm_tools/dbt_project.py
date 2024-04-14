@@ -98,20 +98,27 @@ class DbtProject:
         if dependencies is None:
             dependencies = []
 
+        print(f"__find_upstream_references: File: {file_path}")
         with open(file_path, encoding="utf-8") as f:
             file_contents = f.read()
 
         search_results = re.findall(REF_SEARCH_EXPRESSION, file_contents)
         unique_results = list(set(search_results))
 
+        print(f"__find_upstream_references: Unique Results: {unique_results}")
+
         if recursive:
             for result in unique_results:
                 sub_file_path = next(
                     (x for x in self.__sql_files if x.endswith(f"{result}.sql")), None
                 )
-                dependencies = self.__find_upstream_references(
-                    file_path=sub_file_path, recursive=True, dependencies=dependencies
-                )
+                print(f"__find_upstream_references: sub_file_path: {sub_file_path}")
+                if sub_file_path is not None:
+                    dependencies = self.__find_upstream_references(
+                        file_path=sub_file_path,
+                        recursive=True,
+                        dependencies=dependencies,
+                    )
 
         return dependencies + unique_results
 
@@ -198,12 +205,14 @@ class DbtProject:
         db = TinyDB(self.__database_path, sort_keys=True, indent=4)
 
         for model in directory["models"].values():
-            Model = Query()
-            db.upsert(model, Model.name == model["name"])
+            if "name" in model:
+                Model = Query()
+                db.upsert(model, Model.name == model["name"])
 
         for source in directory["sources"].values():
-            Source = Query()
-            db.upsert(source, Source.name == source["name"])
+            if "name" in source:
+                Source = Query()
+                db.upsert(source, Source.name == source["name"])
 
     def parse(self) -> DbtProjectDirectory:
         """

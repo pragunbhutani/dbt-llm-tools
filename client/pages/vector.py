@@ -88,11 +88,12 @@ with setting_tab:
         st.write("Folders to exclude:")
         st.write(convert_text_input_to_list(folders_to_exclude))
 
-        col1, col2 = st.columns([1, 1])
+        col1, col2, col3 = st.columns([1, 1, 1])
 
         with col1:
             if st.button(
-                "Preview Models", help="Load the models into the vector store."
+                "Preview Models",
+                help="Preview the models that will be loaded into the vector store.",
             ):
                 models = dbt_project.get_models(
                     models=convert_text_input_to_list(models_to_include),
@@ -102,7 +103,7 @@ with setting_tab:
 
         with col2:
             if st.button(
-                "Load to Vector Store", help="Delete all models from the vector store."
+                "Load to Vector Store", help="Load the models into the vector store."
             ):
                 models = dbt_project.get_models(
                     models=convert_text_input_to_list(models_to_include),
@@ -120,6 +121,15 @@ with setting_tab:
                 vector_store.upsert_models(models_to_store)
 
                 st.toast("Models loaded into the vector store!", icon="✅")
+
+        with col3:
+            if st.button(
+                "Clear Vector Store",
+                help="Delete all models from the vector store.",
+                type="primary",
+            ):
+                vector_store.reset_collection()
+                st.toast("Vector store cleared!", icon="🗑️")
 
     else:
         st.warning("Please set the DBT project root in the Project Configuration page.")
@@ -163,19 +173,18 @@ with view_tab:
     st.subheader("Explore Vector Store")
 
     stored_models = vector_store.get_models()
-    models_to_display = stored_models
 
-    if model_search_key := st.text_input("Search", key="model_search"):
-        models_to_display = [
-            model
-            for model in stored_models
-            if model_search_key.lower() in model["id"].lower()
-        ]
+    if stored_models != []:
+        st.dataframe([model["id"] for model in stored_models], use_container_width=True)
 
-    st.divider()
+    if searched_model_name := st.selectbox(
+        "Select Model", [model["id"] for model in stored_models]
+    ):
+        searched_model = next(
+            (x for x in stored_models if x["id"] == searched_model_name), None
+        )
 
-    for model in models_to_display:
-        st.write(model["id"])
-        with st.expander("Show Description"):
-            st.write(model["document"])
-        st.divider()
+        if searched_model is not None:
+            st.markdown(searched_model["document"])
+
+            st.divider()
