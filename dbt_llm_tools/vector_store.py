@@ -38,7 +38,7 @@ class VectorStore:
 
         self.__openai_api_key = openai_api_key
         self.__client = chromadb.PersistentClient(db_persist_path)
-        self.__collection_name = "dbt_models"
+        self.__collection_name = "model_documentation"
 
         self.__embedding_fn = self.__get_embedding_fn(
             embedding_model_name, test_mode=test_mode

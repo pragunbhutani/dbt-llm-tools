@@ -208,3 +208,9 @@ test_chroma.db
 
 # Sphinx documentation
 docs/_build/
+
+# Streamlit
+**/*secrets.toml
+
+# Local Storage
+.local_storage/

@@ -29,9 +29,9 @@ class Chatbot:
         dbt_project_root: str,
         openai_api_key: str,
         embedding_model: str = "text-embedding-3-large",
-        chatbot_model: str = "gpt-4-turbo-preview",
-        vector_db_path: str = "./database/chroma.db",
-        database_path: str = "./database/directory.json",
+        chatbot_model: str = "gpt-4-turbo",
+        vector_db_path: str = ".local_storage/chroma.db",
+        database_path: str = ".local_storage/db.json",
     ) -> None:
         """
         Initializes a chatbot object along with a default set of instructions.

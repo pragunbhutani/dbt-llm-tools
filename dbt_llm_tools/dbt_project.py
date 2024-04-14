@@ -6,6 +6,8 @@ from typing import Union
 
 import yaml
 
+from tinydb import TinyDB, Query
+
 from dbt_llm_tools.dbt_model import DbtModel
 from dbt_llm_tools.types import DbtModelDirectoryEntry, DbtProjectDirectory
 
@@ -21,7 +23,7 @@ class DbtProject:
     def __init__(
         self,
         dbt_project_root: str,
-        database_path: str = "./directory.json",
+        database_path: str = ".local_storage/db.json",
     ) -> None:
         """
         Initializes a dbt project parser object.
@@ -37,7 +39,7 @@ class DbtProject:
             update_model_directory: Update a model in the directory.
         """
         self.__project_root = dbt_project_root
-        self.__directory_path = database_path
+        self.__database_path = database_path
 
         project_file = os.path.join(dbt_project_root, "dbt_project.yml")
 
@@ -134,6 +136,7 @@ class DbtProject:
             sources.append({"name": source[0], "table": source[1]})
 
         return {
+            "type": "model",
             "absolute_path": sql_file,
             "relative_path": sql_file.replace(self.__project_root, ""),
             "name": os.path.basename(sql_file).replace(".sql", ""),
@@ -161,19 +164,15 @@ class DbtProject:
             with open(yaml_path, encoding="utf-8") as f:
                 yaml_contents = yaml.safe_load(f)
 
+            if yaml_contents is None:
+                continue
+
             for model in yaml_contents.get("models", []):
                 model["yaml_path"] = yaml_path
-
-                parsed_columns = {}
-                for col in model.get("columns", []):
-                    col_name = col.pop("name")
-                    parsed_columns[col_name] = col
-
-                model["columns"] = parsed_columns
-
                 models[model["name"]] = model
 
             for source in yaml_contents.get("sources", []):
+                source["type"] = "source"
                 source["yaml_path"] = yaml_path
                 sources[source["name"]] = source
 
@@ -186,7 +185,7 @@ class DbtProject:
         Returns:
             dict: The parsed directory.
         """
-        with open(self.__directory_path, encoding="utf-8") as f:
+        with open(self.__database_path, encoding="utf-8") as f:
             return json.load(f)
 
     def __save_directory(self, directory):
@@ -196,8 +195,15 @@ class DbtProject:
         Args:
             directory (dict): The directory to save.
         """
-        with open(self.__directory_path, "w", encoding="utf-8") as f:
-            json.dump(directory, f, ensure_ascii=False, indent=4)
+        db = TinyDB(self.__database_path, sort_keys=True, indent=4)
+
+        for model in directory["models"].values():
+            Model = Query()
+            db.upsert(model, Model.name == model["name"])
+
+        for source in directory["sources"].values():
+            Source = Query()
+            db.upsert(source, Source.name == source["name"])
 
     def parse(self) -> DbtProjectDirectory:
         """
@@ -206,7 +212,6 @@ class DbtProject:
         Returns:
             dict: The parsed directory.
         """
-        # source_sql_models = list(map(self.__parse_sql_file, self.__sql_files))
         source_sql_models = {}
 
         for sql_file in self.__sql_files:
@@ -251,9 +256,11 @@ class DbtProject:
         if model_name is None:
             raise Exception("No model name provided")
 
-        directory = self.__get_directory()
+        # directory = self.__get_directory()
+        db = TinyDB(self.__database_path)
+        Model = Query()
 
-        return directory["models"].get(model_name)
+        return db.get(Model.name == model_name)
 
     def get_models(
         self,
@@ -274,16 +281,18 @@ class DbtProject:
         """
         searched_models = []
 
-        directory = self.__get_directory()
+        db = TinyDB(self.__database_path)
+        Model = Query()
 
         if models is None and included_folders is None:
-            searched_models = list(directory["models"].values())
+            searched_models = db.search(Model.type == "model")
 
         for model in models or []:
-            searched_models.append(directory["models"].get(model))
+            if model := db.get(Model.name == model):
+                searched_models.append(model)
 
         for included_folder in included_folders or []:
-            for model in directory["models"].values():
+            for model in db.search(Model.type == "model"):
                 if included_folder in model.get(
                     "absolute_path", ""
                 ) or included_folder in model.get("yaml_path", ""):
@@ -296,13 +305,7 @@ class DbtProject:
                 ) or excluded_folder in model.get("yaml_path", ""):
                     searched_models.remove(model)
 
-        models_to_return = []
-
-        for model in searched_models:
-            if model["documentation"] is not None:
-                models_to_return.append(DbtModel(model["documentation"]))
-
-        return models_to_return
+        return searched_models
 
     def update_model_directory(self, model: dict):
         """

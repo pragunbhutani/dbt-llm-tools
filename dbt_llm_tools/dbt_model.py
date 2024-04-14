@@ -10,28 +10,28 @@ class DbtModel:
     Attributes:
         name (str): The name of the model.
         description (str, optional): The description of the model.
-        columns (list[DbtModelColumn], optional): A list of columns contained in the model.
-        May or may not be exhaustive.
+        columns (list[DbtModelColumn], optional):
+            A list of columns contained in the model. May or may not be exhaustive.
     """
 
-    def __init__(self, model_dict: DbtModelDict) -> None:
+    def __init__(self, documentation: DbtModelDict) -> None:
         """
         Initializes a dbt model object.
 
         Args:
             model_dict (dict): A dictionary containing the model name, description and columns.
         """
-        self.name = model_dict.get("name")
+        self.name = documentation.get("name")
 
         if self.name is None:
             raise Exception("Cannot create a model without a valid name.")
 
-        config = model_dict.get("config", {})
+        config = documentation.get("config", {})
         self.tags = config.get("tags", [])
 
-        self.description = model_dict.get("description", "")
+        self.description = documentation.get("description", "")
 
-        raw_columns = filter(lambda x: "name" in x, model_dict.get("columns", []))
+        raw_columns = filter(lambda x: "name" in x, documentation.get("columns", []))
         self.columns = map(
             lambda x: {"name": x.get("name"), "description": x.get("description")},
             raw_columns,
@@ -49,14 +49,20 @@ class DbtModel:
         Returns:
             str: A text description of the model, including the list of columns with their descriptions.
         """
-        model = self.as_dict()
+        if self.description == "":
+            model_text = f"The table { self.name } does not have a description."
+        else:
+            model_text = (
+                f"The table { self.name } is described as follows: { self.description }"
+            )
 
-        model_text = f"The table { model['name'] } is described as follows: { model['description'] }"
         model_text += "\nThis table contains the following columns:\n"
 
-        for col in model["columns"]:
+        for col in self.columns:
             model_text += "\n"
-            model_text += f"- { col['name'] }: { col['description'] }"
+            model_text += (
+                f"- { col['name'] }: { col.get('description', 'No description')}"
+            )
 
         return model_text
 
