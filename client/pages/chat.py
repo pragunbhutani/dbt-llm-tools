@@ -12,7 +12,7 @@ st.set_page_config(page_title="Chatbot", page_icon="🤖", layout="wide")
 menu()
 load_session_state_from_db()
 
-is_new_question = len(st.session_state.get("messages", [])) == 0
+st.session_state.is_new_question = len(st.session_state.get("messages", [])) == 0
 
 vector_store = VectorStore(
     db_persist_path=st.session_state.get(
@@ -56,42 +56,40 @@ for message in st.session_state.messages:
             st.write(message["content"])
 
 if prompt := st.chat_input("What is up?", disabled=CHATBOT_DISABLED):
-    if is_new_question:
+    if st.session_state.is_new_question:
+        st.session_state.closest_model_names = []
+
         st.session_state.messages += [
             {"role": "system", "content": ANSWER_QUESTION_INSTRUCTIONS},
             {"role": "system", "content": "The user would like to know:"},
         ]
+
+        st.session_state.is_new_question = False
 
     st.session_state.messages.append({"role": "user", "content": prompt})
 
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    if is_new_question:
-        with st.chat_message("system"):
-            st.write("I'm looking for the closest models to the question.")
+    closest_models = get_matching_models(prompt)
 
-        closest_models = get_matching_models(prompt)
+    if closest_models:
+        st.session_state.messages.append(
+            {
+                "role": "system",
+                "content": """
+                    In addition to information you have already, here is more information about certain tables
+                    that might help you answer the users question.:
+                """,
+            }
+        )
 
-        if closest_models:
-            st.session_state.messages.append(
-                {
-                    "role": "system",
-                    "content": "The following information may be used to answer the users question:",
-                }
-            )
-
-            model_names = ", ".join([model["id"] for model in closest_models])
-
-            with st.chat_message("system"):
-                st.write(f"Here are the closest models to the question: {model_names}")
-
-            for model in closest_models:
+        for model in closest_models:
+            if model["id"] not in st.session_state.closest_model_names:
                 st.session_state.messages.append(
                     {"role": "system", "content": model["document"]}
                 )
-
-        is_new_question = False
+                st.session_state.closest_model_names.append(model["id"])
 
     with st.chat_message("assistant"):
         stream = client.chat.completions.create(
@@ -109,10 +107,11 @@ if prompt := st.chat_input("What is up?", disabled=CHATBOT_DISABLED):
 
 
 def clear_chat():
-    is_new_question = True
+    st.session_state.is_new_question = True
     st.session_state.messages = []
+    st.session_state.closest_model_names = []
     st.toast("Starting over!")
 
 
-if is_new_question is False:
+if st.session_state.is_new_question is False:
     st.button("Start over", on_click=clear_chat)
