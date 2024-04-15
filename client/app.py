@@ -55,20 +55,16 @@ if st.button(
     label="Parse Project",
     type="primary",
     help="Parse the DBT project. Project Root must be tested first.",
-    disabled=not st.session_state.get("is_project_root_valid", False),
+    disabled=not st.session_state.get("dbt_project_root", False),
 ):
-    try:
-        save_session_to_db()
+    dbt_project = DbtProject(
+        dbt_project_root=st.session_state["dbt_project_root"],
+        database_path=st.session_state["local_db_path"],
+    )
 
-        dbt_project = DbtProject(
-            dbt_project_root=st.session_state["dbt_project_root"],
-            database_path=st.session_state["local_db_path"],
-        )
-
-        dbt_project.parse()
-        st.success("DBT project root is valid!")
-    except:
-        st.error("Failed to parse DBT project!")
+    dbt_project.parse()
+    save_session_to_db()
+    st.success("Project Parsed Succesfully!")
 
 
 st.divider()

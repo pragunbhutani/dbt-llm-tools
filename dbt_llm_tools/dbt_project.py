@@ -48,10 +48,6 @@ class DbtProject:
 
         with open(project_file, encoding="utf-8") as f:
             project_config = yaml.safe_load(f)
-
-            if "model-paths" not in project_config:
-                raise Exception("No model-paths defined in the dbt project file")
-
             self.__model_paths = project_config.get("model-paths", ["models"])
 
         self.__sql_files = self.__get_all_files("sql")
@@ -98,21 +94,20 @@ class DbtProject:
         if dependencies is None:
             dependencies = []
 
-        print(f"__find_upstream_references: File: {file_path}")
         with open(file_path, encoding="utf-8") as f:
             file_contents = f.read()
 
         search_results = re.findall(REF_SEARCH_EXPRESSION, file_contents)
         unique_results = list(set(search_results))
 
-        print(f"__find_upstream_references: Unique Results: {unique_results}")
-
         if recursive:
             for result in unique_results:
+                if result in dependencies or result in file_path:
+                    continue
+
                 sub_file_path = next(
-                    (x for x in self.__sql_files if x.endswith(f"{result}.sql")), None
+                    (x for x in self.__sql_files if x.endswith(f"/{result}.sql")), None
                 )
-                print(f"__find_upstream_references: sub_file_path: {sub_file_path}")
                 if sub_file_path is not None:
                     dependencies = self.__find_upstream_references(
                         file_path=sub_file_path,
@@ -140,7 +135,8 @@ class DbtProject:
 
         for raw_source in source_search:
             source = raw_source.replace("'", "").replace('"', "").split(",")
-            sources.append({"name": source[0], "table": source[1]})
+            if len(source) == 2:
+                sources.append({"name": source[0], "table": source[1]})
 
         return {
             "type": "model",

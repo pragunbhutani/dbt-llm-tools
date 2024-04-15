@@ -56,13 +56,14 @@ class DbtModel:
                 f"The table { self.name } is described as follows: { self.description }"
             )
 
-        model_text += "\nThis table contains the following columns:\n"
+        if len(self.columns) > 0:
+            model_text += "\nThis table contains the following columns:\n"
 
-        for col in self.columns:
-            model_text += "\n"
-            model_text += (
-                f"- { col['name'] }: { col.get('description', 'No description')}"
-            )
+            for col in self.columns:
+                model_text += "\n"
+                model_text += (
+                    f"- { col['name'] }: { col.get('description', 'No description')}"
+                )
 
         return model_text
 

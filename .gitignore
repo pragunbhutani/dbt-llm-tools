@@ -214,3 +214,4 @@ docs/_build/
 
 # Local Storage
 .local_storage/
+example_dbt_project/

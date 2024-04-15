@@ -4,7 +4,7 @@ Copyright (c) 2024 [Pragun Bhutani](https://pragunbhutani.com) & [Delta 4 Techno
 
 Portions of this software are licensed as follows:
 
-- All content that resides under the "client/" directory of this repository, if that directory exists, is licensed under the license defined in "client/LICENSE".
+- All content that resides under the "ee/" directory of this repository, if that directory exists, is licensed under the license defined in "ee/LICENSE".
 - All third party components incorporated into the dbt-llm-tools Software are licensed under the original license provided by the owner of the applicable component.
 - Content outside of the above mentioned directories or restrictions above is available under the "MIT Expat" license as defined below.
 
