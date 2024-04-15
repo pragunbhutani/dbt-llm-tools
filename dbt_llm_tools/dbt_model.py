@@ -32,9 +32,11 @@ class DbtModel:
         self.description = documentation.get("description", "")
 
         raw_columns = filter(lambda x: "name" in x, documentation.get("columns", []))
-        self.columns = map(
-            lambda x: {"name": x.get("name"), "description": x.get("description")},
-            raw_columns,
+        self.columns = list(
+            map(
+                lambda x: {"name": x.get("name"), "description": x.get("description")},
+                raw_columns,
+            )
         )
 
     def __print_model_doc(self) -> str:
