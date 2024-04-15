@@ -12,9 +12,12 @@ test:
 doctest:
 	@(cd docs/source; sphinx-build -b doctest . _build/doctest)
 
+make poetry:
+	@(curl -sSL https://install.python-poetry.org | python3 -)
+
 # install poetry and dependencies
 install:
-	@(curl -sSL https://install.python-poetry.org | python3 -; poetry install; git config --local core.hooksPath .githooks/)
+	@(poetry install; git config --local core.hooksPath .githooks/; mkdir -p .local_storage)
 
 # Fetch the open source project from GitLab as an example to play with.
 fetch_example_project:
@@ -22,7 +25,7 @@ fetch_example_project:
 
 # Run the streamlit client
 run_client:
-	@(poetry run streamlit run client/app.py)
+	@(mkdir -p .local_storage; poetry run streamlit run client/app.py)
 
 # Clean the local storage
 clean_local_storage:

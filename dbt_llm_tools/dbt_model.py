@@ -56,7 +56,7 @@ class DbtModel:
                 f"The table { self.name } is described as follows: { self.description }"
             )
 
-        if len(self.columns) > 0:
+        if len(list(self.columns)) > 0:
             model_text += "\nThis table contains the following columns:\n"
 
             for col in self.columns:
