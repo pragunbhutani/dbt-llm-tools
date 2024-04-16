@@ -16,7 +16,7 @@ make poetry:
 	@(curl -sSL https://install.python-poetry.org | python3 -)
 
 make lint:
-	@(poetry run pylint dbt_llm_tools tests client)
+	@(poetry run pylint dbt_llm_tools tests client; poetry run flake8 dbt_llm_tools tests client)
 
 # install poetry and dependencies
 install:

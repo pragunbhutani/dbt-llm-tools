@@ -15,7 +15,10 @@ MODEL_WITH_NAME_AND_DESCRIPTION = {
     "description": "model_description",
 }
 
-MODEL_WITH_NAME_AND_DESCRIPTION_PROMPT_TEXT = "The table model_with_name_and_description is described as follows: model_description"
+MODEL_WITH_NAME_AND_DESCRIPTION_PROMPT_TEXT = (
+    "The table model_with_name_and_description is"
+    + " described as follows: model_description"
+)
 
 MODEL_WITH_NAME_DESCRIPTION_AND_COLUMNS = {
     "name": "model_with_name_description_and_columns",
