@@ -5,7 +5,7 @@ from dbt_llm_tools import DbtProject
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 VALID_PROJECT_PATH = os.path.join(HERE, "test_data/valid_dbt_project")
-DATABASE_PATH = os.path.join(HERE, ".local_storage/db.json")
+DATABASE_PATH = os.path.join(HERE, "test_data/directory.json")
 
 
 class DbtProjectTestCase(unittest.TestCase):
