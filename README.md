@@ -10,25 +10,26 @@ In addition, you can also access the underlying classes that enable you to:
 
 ## Get Started
 
-You can install `dbt-llm-tools` with the UI and interact with your project via a streamlit interface. Alternatively, you can also install without the UI to use the underlying classes only.
+You can install `dbt-llm-tools` with the UI and interact with your project via a streamlit interface.
+Alternatively, you can also install without the UI to use the underlying classes only.
 
-### Install - With UI
+### Option 1 - With UI
 
 To install with the UI:
 
 1. Clone the repository on your computer: `gh repo clone pragunbhutani/dbt-llm-tools`
 2. `cd` into the repository: `cd dbt-llm-tools`
 3. The project uses poetry to install dependencies. If you don't have poetry installed already, run `make poetry`.
+   - Remember to add the poetry executable to your $PATH and refresh your terminal.
 4. Run `make install` to download and set up all of the dependencies
    - (optional) Download an example dbt project with `make fetch_example_project`.
-   - This project will be stored in the sub-directory named `example_dbt_project`
 5. Run the client with `make run_client`
 
 You should then be able to see the client run in your browser at `http://localhost:8501/app`
 
 **Note** - To use the tools, you'll need an OpenAI API Key.
 
-### Install - Without UI
+### Option 2 - Without UI
 
 dbt-llm-tools can be installed via pip.
 

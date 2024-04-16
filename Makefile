@@ -21,7 +21,10 @@ install:
 
 # Fetch the open source project from GitLab as an example to play with.
 fetch_example_project:
-	@(git clone https://github.com/stacktonic-com/stacktonic-dbt-example-project.git example_dbt_project)
+	@( \
+		git clone https://github.com/stacktonic-com/stacktonic-dbt-example-project.git example_dbt_project; \
+		echo "Example project fetched to ./example_dbt_project/" \
+	)
 
 # Run the streamlit client
 run_client:
