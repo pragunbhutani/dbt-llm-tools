@@ -28,7 +28,11 @@ def load_session_state_from_db():
 
 
 def save_session_to_db():
-    db = TinyDB(st.session_state["local_db_path"], sort_keys=True, indent=4)
+    db = TinyDB(
+        st.session_state.get("local_db_path", ".local_storage/db.json"),
+        sort_keys=True,
+        indent=4,
+    )
     File = Query()
     db.upsert(
         {
@@ -40,7 +44,7 @@ def save_session_to_db():
                 "openai_embedding_model", ""
             ),
             "vector_store_path": st.session_state.get(
-                "vector_store_path", ".local_storage/chroma.db"
+                "vector_store_path", ".local_storage"
             ),
             "local_db_path": st.session_state.get(
                 "local_db_path", ".local_storage/db.json"

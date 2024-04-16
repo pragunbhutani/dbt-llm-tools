@@ -15,7 +15,7 @@ load_session_state_from_db()
 st.session_state.is_new_question = len(st.session_state.get("messages", [])) == 0
 
 vector_store = VectorStore(
-    db_persist_path=st.session_state.get(
+    vector_db_path=st.session_state.get(
         "vector_store_path", ".local_storage/chroma.db"
     ),
     embedding_model_name=st.session_state.get(
@@ -86,6 +86,8 @@ if prompt := st.chat_input("What is up?", disabled=CHATBOT_DISABLED):
 
         for model in closest_models:
             if model["id"] not in st.session_state.closest_model_names:
+                with st.chat_message("system"):
+                    st.write(f"Adding context about: {model['id']}")
                 st.session_state.messages.append(
                     {"role": "system", "content": model["document"]}
                 )

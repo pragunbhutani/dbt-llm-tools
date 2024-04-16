@@ -18,9 +18,7 @@ st.caption(
 )
 
 vector_store = VectorStore(
-    db_persist_path=st.session_state.get(
-        "vector_store_path", ".local_storage/chroma.db"
-    ),
+    vector_db_path=st.session_state.get("vector_store_path", ".local_storage"),
     embedding_model_name=st.session_state.get(
         "openai_embedding_model", "text-embedding-3-large"
     ),
@@ -46,11 +44,6 @@ with setting_tab:
         You can choose to leave all the fields blank to include all the models in your DBT project.
         """
     )
-
-    # db = TinyDB(st.session_state.get("local_db_path", ".local_storage/db.json"))
-    # Document = Query()
-
-    # all_models = db.search(Document.type == "model")
 
     models = []
 

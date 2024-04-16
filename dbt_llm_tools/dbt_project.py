@@ -23,7 +23,7 @@ class DbtProject:
     def __init__(
         self,
         dbt_project_root: str,
-        database_path: str = ".local_storage",
+        database_path: str = ".local_storage/db.json",
     ) -> None:
         """
         Initializes a dbt project parser object.
@@ -44,8 +44,8 @@ class DbtProject:
         if not os.path.isfile(project_file):
             raise Exception("No dbt project found in the specified folder")
 
+        self.__database_path = database_path
         os.makedirs(os.path.dirname(database_path), exist_ok=True)
-        self.__database_path = os.path.join(database_path, "db.json")
 
         with open(project_file, encoding="utf-8") as f:
             project_config = yaml.safe_load(f)

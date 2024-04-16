@@ -28,7 +28,8 @@ class Chatbot:
         self,
         dbt_project_root: str,
         openai_api_key: str,
-        database_path: str = ".local_storage",
+        database_path: str = ".local_storage/db.json",
+        vector_db_path: str = ".local_storage/chroma.db",
         embedding_model: str = "text-embedding-3-large",
         chatbot_model: str = "gpt-4-turbo",
     ) -> None:
@@ -40,7 +41,10 @@ class Chatbot:
             openai_api_key (str): Your OpenAI API key.
 
             database_path (str, optional):
-                The path to the persistent database files. Defaults to ".local_storage".
+                The path to the persistent database files. Defaults to ".local_storage/db.json".
+
+            vector_db_path (str, optional):
+                The path to the persistent vector database. Defaults to ".local_storage/chroma.db".
 
             embedding_model (str, optional):
                 The name of the OpenAI embedding model to be used.
@@ -61,7 +65,7 @@ class Chatbot:
         )
 
         self.store: VectorStore = VectorStore(
-            openai_api_key, embedding_model, database_path
+            openai_api_key, embedding_model, vector_db_path
         )
 
         self.client = OpenAI(api_key=self.__openai_api_key)
