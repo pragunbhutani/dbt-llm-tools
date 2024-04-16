@@ -7,8 +7,7 @@ MODEL_WITH_ONLY_NAME = {
 }
 
 MODEL_WITH_ONLY_NAME_PROMPT_TEXT = (
-    "The table model_with_only_name is described as follows: "
-    + "\nThis table contains the following columns:\n"
+    "The table model_with_only_name does not have a description."
 )
 
 MODEL_WITH_NAME_AND_DESCRIPTION = {
@@ -17,8 +16,8 @@ MODEL_WITH_NAME_AND_DESCRIPTION = {
 }
 
 MODEL_WITH_NAME_AND_DESCRIPTION_PROMPT_TEXT = (
-    "The table model_with_name_and_description is described as follows: model_description"
-    + "\nThis table contains the following columns:\n"
+    "The table model_with_name_and_description is"
+    + " described as follows: model_description"
 )
 
 MODEL_WITH_NAME_DESCRIPTION_AND_COLUMNS = {

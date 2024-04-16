@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dbt-llm-tools"
-version = "0.1.1"
+version = "0.2.0a0"
 description = "LLM based tools for dbt projects. Answer data questions, generate documentation and more."
 authors = [
     "Pragun Bhutani <1109752+pragunbhutani@users.noreply.github.com>"
@@ -30,6 +30,8 @@ openai = "^1.16.0"
 chromadb = "^0.4.24"
 PyYAML = "^6.0.1"
 typing-extensions = "^4.10.0"
+streamlit = "^1.33.0"
+tinydb = "^4.8.0"
 
 [tool.poetry.group.dev.dependencies]
 pylint = "^3.1.0"
@@ -59,7 +61,10 @@ disable = """
     missing-module-docstring,
     too-many-arguments,
     too-few-public-methods,
-    broad-exception-raised
+    broad-exception-raised,
+    missing-function-docstring,
+    redefined-builtin,
+    duplicate-code
 """
 
 [build-system]

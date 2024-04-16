@@ -31,10 +31,10 @@ jobs:
         run: poetry install
 
       - name: Lint with Flake8
-        run: poetry run flake8 dbt_llm_tools tests
+        run: poetry run flake8 dbt_llm_tools tests client
 
       - name: Lint with pylint
-        run: poetry run pylint dbt_llm_tools tests
+        run: poetry run pylint dbt_llm_tools tests client
 
       - name: Test with pytest
         run: poetry run pytest tests

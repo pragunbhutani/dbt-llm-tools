@@ -1,5 +1,6 @@
 from openai import OpenAI
 
+from dbt_llm_tools.dbt_model import DbtModel
 from dbt_llm_tools.dbt_project import DbtProject
 from dbt_llm_tools.instructions import ANSWER_QUESTION_INSTRUCTIONS
 from dbt_llm_tools.types import ParsedSearchResult, PromptMessage
@@ -28,10 +29,10 @@ class Chatbot:
         self,
         dbt_project_root: str,
         openai_api_key: str,
+        database_path: str = ".local_storage/db.json",
+        vector_db_path: str = ".local_storage/chroma.db",
         embedding_model: str = "text-embedding-3-large",
-        chatbot_model: str = "gpt-4-turbo-preview",
-        vector_db_path: str = "./database/chroma.db",
-        database_path: str = "./database/directory.json",
+        chatbot_model: str = "gpt-4-turbo",
     ) -> None:
         """
         Initializes a chatbot object along with a default set of instructions.
@@ -40,13 +41,19 @@ class Chatbot:
             dbt_project_root (str): The absolute path to the root of the dbt project.
             openai_api_key (str): Your OpenAI API key.
 
-            embedding_model (str, optional): The name of the OpenAI embedding model to be used.
-            Defaults to "text-embedding-3-large".
+            database_path (str, optional):
+                The path to the persistent database files. Defaults to ".local_storage/db.json".
 
-            chatbot_model (str, optional): The name of the OpenAI chatbot model to be used.
-            Defaults to "gpt-4-turbo-preview".
+            vector_db_path (str, optional):
+                The path to the persistent vector database. Defaults to ".local_storage/chroma.db".
 
-            db_persist_path (str, optional): The path to the persistent database file. Defaults to "./chroma.db".
+            embedding_model (str, optional):
+                The name of the OpenAI embedding model to be used.
+                Defaults to "text-embedding-3-large".
+
+            chatbot_model (str, optional):
+                The name of the OpenAI chatbot model to be used.
+                Defaults to "gpt-4-turbo-preview".
 
         Returns:
             None
@@ -162,7 +169,9 @@ class Chatbot:
             None
         """
         models = self.project.get_models(models, included_folders, excluded_folders)
-        self.store.upsert_models(models)
+        self.store.upsert_models(
+            list(map(lambda x: DbtModel(x.get("documentation")), models))
+        )
 
     def reset_model_db(self) -> None:
         """

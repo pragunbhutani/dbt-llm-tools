@@ -1,3 +1,4 @@
+import os
 import json
 
 import chromadb
@@ -21,7 +22,7 @@ class VectorStore:
         self,
         openai_api_key: str,
         embedding_model_name: str = "text-embedding-3-large",
-        db_persist_path: str = "./chroma.db",
+        vector_db_path: str = ".local_storage/chroma.db",
         test_mode: bool = False,
     ) -> None:
         """
@@ -33,12 +34,14 @@ class VectorStore:
             db_persist_path (str, optional): The path to the persistent database file. Defaults to "./chroma.db".
             test_mode (bool, optional): Whether the vector store is being used in test mode. Defaults to False.
         """
-        if not isinstance(db_persist_path, str) or db_persist_path == "":
+        if not isinstance(vector_db_path, str) or vector_db_path == "":
             raise Exception("Please provide a valid path for the persistent database.")
 
+        os.makedirs(vector_db_path, exist_ok=True)
+        self.__client = chromadb.PersistentClient(vector_db_path)
+        self.__collection_name = "model_documentation"
+
         self.__openai_api_key = openai_api_key
-        self.__client = chromadb.PersistentClient(db_persist_path)
-        self.__collection_name = "dbt_models"
 
         self.__embedding_fn = self.__get_embedding_fn(
             embedding_model_name, test_mode=test_mode
