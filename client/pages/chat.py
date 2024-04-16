@@ -86,8 +86,6 @@ if prompt := st.chat_input("What is up?", disabled=CHATBOT_DISABLED):
 
         for model in closest_models:
             if model["id"] not in st.session_state.closest_model_names:
-                with st.chat_message("system"):
-                    st.write(f"Adding context about: {model['id']}")
                 st.session_state.messages.append(
                     {"role": "system", "content": model["document"]}
                 )
