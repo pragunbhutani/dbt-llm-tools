@@ -8,6 +8,10 @@ In addition, you can also access the underlying classes that enable you to:
 - Chatbot: ask questions about data and get answers based on your dbt model documentation
 - Documentation Generator: generate documentation for dbt models based on model and upstream model definition.
 
+**Here is a quick demo of how the Chatbot works:**
+
+https://www.loom.com/share/abb0612c4e884d4cb8fabc22af964e7e?sid=f5f8c0e6-51f5-4afc-a7bf-51e9e182c2e7
+
 ## Get Started
 
 You can install `dbt-llm-tools` with the UI and interact with your project via a streamlit interface.
