@@ -213,5 +213,5 @@ docs/_build/
 **/*secrets.toml
 
 # Local Storage
-.local_storage/
+**/.local_storage/
 example_dbt_project/
