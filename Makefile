@@ -7,7 +7,7 @@ documentation:
 	@(poetry export --with docs -f requirements.txt -o requirements-docs.txt; cd docs; make html)
 
 test:
-	poetry run pytest
+	poetry run pytest tests
 
 doctest:
 	@(cd docs/source; sphinx-build -b doctest . _build/doctest)

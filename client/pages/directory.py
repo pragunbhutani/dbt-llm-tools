@@ -25,7 +25,7 @@ with models_tab:
             "name": model["name"],
             "has_documentation": "✅" if "documentation" in model else "❌",
             "has_interpretation": "✅" if "interpretation" in model else "❌",
-            "path": model["relative_path"],
+            "path": model.get("relative_path", ""),
         }
         for model in all_models
     ]

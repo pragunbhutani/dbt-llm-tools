@@ -47,7 +47,7 @@ class VectorStoreTestCase(unittest.TestCase):
         Test for the case when invalid models are upserted into the vector store.
         """
         vector_store = VectorStore(
-            "api_key", vector_db_path="./test_chroma.db", test_mode=True
+            "api_key", vector_db_path=".local_storage/test_chroma.db", test_mode=True
         )
 
         with self.assertRaises(Exception):
@@ -63,7 +63,9 @@ class VectorStoreTestCase(unittest.TestCase):
             DbtModel(MODEL_WITH_NAME_DESCRIPTION_AND_COLUMNS),
         ]
 
-        vector_store = VectorStore("api_key", test_mode=True)
+        vector_store = VectorStore(
+            "api_key", test_mode=True, vector_db_path=".local_storage/test_chroma.db"
+        )
         vector_store.upsert_models(list_of_valid_models)
 
         self.assertEqual(len(vector_store.get_models()), 3)
@@ -78,7 +80,9 @@ class VectorStoreTestCase(unittest.TestCase):
             DbtModel(MODEL_WITH_NAME_DESCRIPTION_AND_COLUMNS),
         ]
 
-        vector_store = VectorStore("api_key", test_mode=True)
+        vector_store = VectorStore(
+            "api_key", test_mode=True, vector_db_path=".local_storage/test_chroma.db"
+        )
         vector_store.upsert_models(list_of_valid_models)
 
         with self.assertRaises(Exception):
@@ -94,7 +98,9 @@ class VectorStoreTestCase(unittest.TestCase):
             DbtModel(MODEL_WITH_NAME_DESCRIPTION_AND_COLUMNS),
         ]
 
-        vector_store = VectorStore("api_key", test_mode=True)
+        vector_store = VectorStore(
+            "api_key", test_mode=True, vector_db_path=".local_storage/test_chroma.db"
+        )
 
         vector_store.upsert_models(list_of_valid_models)
         self.assertEqual(len(vector_store.get_models()), 3)

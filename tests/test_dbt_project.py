@@ -5,7 +5,7 @@ from dbt_llm_tools import DbtModel, DbtProject
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 VALID_PROJECT_PATH = os.path.join(HERE, "test_data/valid_dbt_project")
-DATABASE_PATH = os.path.join(HERE, "test_data/directory.json")
+DATABASE_PATH = os.path.join(HERE, ".local_storage/db.json")
 
 
 class DbtProjectTestCase(unittest.TestCase):
@@ -39,6 +39,8 @@ class DbtProjectTestCase(unittest.TestCase):
             VALID_PROJECT_PATH,
             database_path=DATABASE_PATH,
         )
+        project.parse()
+
         models = project.get_models()
 
         self.assertEqual(len(models), 5)
@@ -51,18 +53,20 @@ class DbtProjectTestCase(unittest.TestCase):
             VALID_PROJECT_PATH,
             database_path=DATABASE_PATH,
         )
+        project.parse()
+
         models = project.get_models(
             included_folders=["models/staging", "models/intermediate"]
         )
 
         self.assertEqual(len(models), 3)
 
-        for _, model in enumerate(models):
-            self.assertIsInstance(model, DbtModel)
+        # for _, model in enumerate(models):
+        #     self.assertIsInstance(model, DbtModel)
 
-        self.assertEqual(models[0].name, "staging_1")
-        self.assertEqual(models[1].name, "staging_2")
-        self.assertEqual(models[2].name, "intermediate_1")
+        self.assertEqual(models[0]["name"], "staging_1")
+        self.assertEqual(models[1]["name"], "staging_2")
+        self.assertEqual(models[2]["name"], "intermediate_1")
 
     def test_get_models_with_excluded_folders(self):
         """
@@ -73,11 +77,13 @@ class DbtProjectTestCase(unittest.TestCase):
             VALID_PROJECT_PATH,
             database_path=DATABASE_PATH,
         )
+        project.parse()
+
         models = project.get_models(excluded_folders=["models/intermediate"])
 
         self.assertEqual(len(models), 4)
-        for _, model in enumerate(models):
-            self.assertIsInstance(model, DbtModel)
+        # for _, model in enumerate(models):
+        #     self.assertIsInstance(model, DbtModel)
 
     def test_get_models_by_name(self):
         """
@@ -87,11 +93,12 @@ class DbtProjectTestCase(unittest.TestCase):
             VALID_PROJECT_PATH,
             database_path=DATABASE_PATH,
         )
+        project.parse()
         models = project.get_models(models=["staging_1", "staging_2"])
 
         self.assertEqual(len(models), 2)
-        self.assertEqual(models[0].name, "staging_1")
-        self.assertEqual(models[1].name, "staging_2")
+        self.assertEqual(models[0]["name"], "staging_1")
+        self.assertEqual(models[1]["name"], "staging_2")
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 from openai import OpenAI
 
+from dbt_llm_tools.dbt_model import DbtModel
 from dbt_llm_tools.dbt_project import DbtProject
 from dbt_llm_tools.instructions import ANSWER_QUESTION_INSTRUCTIONS
 from dbt_llm_tools.types import ParsedSearchResult, PromptMessage
@@ -168,7 +169,9 @@ class Chatbot:
             None
         """
         models = self.project.get_models(models, included_folders, excluded_folders)
-        self.store.upsert_models(models)
+        self.store.upsert_models(
+            list(map(lambda x: DbtModel(x.get("documentation")), models))
+        )
 
     def reset_model_db(self) -> None:
         """

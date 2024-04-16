@@ -199,14 +199,16 @@ class DbtProject:
             directory (dict): The directory to save.
         """
         db = TinyDB(self.__database_path, sort_keys=True, indent=4)
+        Model = Query()  # pylint: disable=invalid-name
+        Source = Query()  # pylint: disable=invalid-name
 
-        for model in directory["models"].values():
+        for name, model in directory["models"].items():
             if "name" in model:
-                db.upsert(model, Query().name == model["name"])
+                db.upsert(model, Model.name == name)
 
-        for source in directory["sources"].values():
+        for name, source in directory["sources"].items():
             if "name" in source:
-                db.upsert(source, Query().name == source["name"])
+                db.upsert(source, Source.name == source["name"])
 
     def parse(self) -> DbtProjectDirectory:
         """
@@ -261,8 +263,9 @@ class DbtProject:
 
         # directory = self.__get_directory()
         db = TinyDB(self.__database_path)
+        Model = Query()  # pylint: disable=invalid-name
 
-        return db.get(Query().name == model_name)
+        return db.get(Model.name == model_name)
 
     def get_models(
         self,
@@ -284,16 +287,18 @@ class DbtProject:
         searched_models = []
 
         db = TinyDB(self.__database_path)
+        Model = Query()  # pylint: disable=invalid-name
+        File = Query()  # pylint: disable=invalid-name
 
         if models is None and included_folders is None:
-            searched_models = db.search(Query().type == "model")
+            searched_models = db.search(File.type == "model")
 
         for model in models or []:
-            if model := db.get(Query().name == model):
+            if model := db.get(Model.name == model):
                 searched_models.append(model)
 
         for included_folder in included_folders or []:
-            for model in db.search(Query().type == "model"):
+            for model in db.search(File.type == "model"):
                 if included_folder in model.get(
                     "absolute_path", ""
                 ) or included_folder in model.get("yaml_path", ""):
