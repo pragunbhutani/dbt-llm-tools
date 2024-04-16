@@ -1,19 +1,16 @@
-import os
-
 import streamlit as st
 from tinydb import TinyDB, Query
 from tinydb.operations import set
-
-from dbt_llm_tools import DbtProject
 
 from menu import menu
 from styles import button_override
 from settings import load_session_state_from_db, save_session_to_db
 
+from dbt_llm_tools import DbtProject
+
 st.set_page_config(page_title="dbt-llm-tools", page_icon="🤖", layout="wide")
 
 db = TinyDB(st.session_state.get("local_db_path", ".local_storage/db.json"))
-File = Query()
 
 st.title("Welcome to dbt-llm-tools 👋")
 
@@ -37,7 +34,7 @@ if openai_api_key := st.text_input(
     value=st.session_state.get("openai_api_key", ""),
 ):
     st.session_state["openai_api_key"] = openai_api_key
-    db.update(set("openai_api_key", openai_api_key), File.type == "settings")
+    db.update(set("openai_api_key", openai_api_key), Query().type == "settings")
 
 
 if dbt_project_root := st.text_input(
@@ -47,7 +44,7 @@ if dbt_project_root := st.text_input(
 ):
     st.session_state["dbt_project_root"] = dbt_project_root
 
-    db.update(set("dbt_project_root", dbt_project_root), File.type == "settings")
+    db.update(set("dbt_project_root", dbt_project_root), Query().type == "settings")
 
 st.caption("")
 
@@ -79,7 +76,7 @@ if openai_chatbot_model := st.selectbox(
 ):
     st.session_state["openai_chatbot_model"] = openai_chatbot_model
     db.update(
-        set("openai_chatbot_model", openai_chatbot_model), File.type == "settings"
+        set("openai_chatbot_model", openai_chatbot_model), Query().type == "settings"
     )
 
 if openai_embedding_model := st.selectbox(
@@ -89,7 +86,8 @@ if openai_embedding_model := st.selectbox(
 ):
     st.session_state["openai_embedding_model"] = openai_embedding_model
     db.update(
-        set("openai_embedding_model", openai_embedding_model), File.type == "settings"
+        set("openai_embedding_model", openai_embedding_model),
+        Query().type == "settings",
     )
 
 st.caption("")

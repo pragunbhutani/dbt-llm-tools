@@ -35,19 +35,19 @@ class VectorStoreTestCase(unittest.TestCase):
         vector_store = VectorStore("api_key", "text-embedding-3-large")
         self.assertIsInstance(vector_store, VectorStore)
 
-    def test_vector_store_initialized_with_invalid_db_persist_path(self):
+    def test_vector_store_initialized_with_invalid_vector_db_path(self):
         """
         Test for the case when the vector store is initialized with an invalid database persist path.
         """
         with self.assertRaises(Exception):
-            VectorStore("api_key", db_persist_path="")
+            VectorStore("api_key", vector_db_path="")
 
     def test_invalid_models_upserted_into_vector_store(self):
         """
         Test for the case when invalid models are upserted into the vector store.
         """
         vector_store = VectorStore(
-            "api_key", db_persist_path="./test_chroma.db", test_mode=True
+            "api_key", vector_db_path="./test_chroma.db", test_mode=True
         )
 
         with self.assertRaises(Exception):

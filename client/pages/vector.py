@@ -1,10 +1,10 @@
 import streamlit as st
 
-from dbt_llm_tools import DbtProject, VectorStore, DbtModel
-
 from menu import menu
 from styles import button_override
 from settings import load_session_state_from_db
+
+from dbt_llm_tools import DbtProject, VectorStore, DbtModel
 
 st.set_page_config(page_title="Configuration", page_icon="🤖", layout="wide")
 
@@ -37,10 +37,10 @@ with setting_tab:
 
     st.markdown(
         """
-        Select the models that you'd like to make available to the chatbot. 
-        If the models have documentation, it will be loaded into the vector store and used to generate 
+        Select the models that you'd like to make available to the chatbot.
+        If the models have documentation, it will be loaded into the vector store and used to generate
         chatbot responses.
-        
+
         You can choose to leave all the fields blank to include all the models in your DBT project.
         """
     )
@@ -167,7 +167,7 @@ with view_tab:
 
     stored_models = vector_store.get_models()
 
-    if stored_models != []:
+    if stored_models:
         st.dataframe([model["id"] for model in stored_models], use_container_width=True)
 
     if searched_model_name := st.selectbox(

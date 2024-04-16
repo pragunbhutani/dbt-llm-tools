@@ -8,7 +8,6 @@ import yaml
 
 from tinydb import TinyDB, Query
 
-from dbt_llm_tools.dbt_model import DbtModel
 from dbt_llm_tools.types import DbtModelDirectoryEntry, DbtProjectDirectory
 
 SOURCE_SEARCH_EXPRESSION = r"source\(['\"]*(.*?)['\"]*?\)"
@@ -203,13 +202,11 @@ class DbtProject:
 
         for model in directory["models"].values():
             if "name" in model:
-                Model = Query()
-                db.upsert(model, Model.name == model["name"])
+                db.upsert(model, Query().name == model["name"])
 
         for source in directory["sources"].values():
             if "name" in source:
-                Source = Query()
-                db.upsert(source, Source.name == source["name"])
+                db.upsert(source, Query().name == source["name"])
 
     def parse(self) -> DbtProjectDirectory:
         """
@@ -264,9 +261,8 @@ class DbtProject:
 
         # directory = self.__get_directory()
         db = TinyDB(self.__database_path)
-        Model = Query()
 
-        return db.get(Model.name == model_name)
+        return db.get(Query().name == model_name)
 
     def get_models(
         self,
@@ -288,17 +284,16 @@ class DbtProject:
         searched_models = []
 
         db = TinyDB(self.__database_path)
-        Model = Query()
 
         if models is None and included_folders is None:
-            searched_models = db.search(Model.type == "model")
+            searched_models = db.search(Query().type == "model")
 
         for model in models or []:
-            if model := db.get(Model.name == model):
+            if model := db.get(Query().name == model):
                 searched_models.append(model)
 
         for included_folder in included_folders or []:
-            for model in db.search(Model.type == "model"):
+            for model in db.search(Query().type == "model"):
                 if included_folder in model.get(
                     "absolute_path", ""
                 ) or included_folder in model.get("yaml_path", ""):

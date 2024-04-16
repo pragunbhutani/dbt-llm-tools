@@ -7,8 +7,7 @@ def load_session_state_from_db():
         st.session_state["local_db_path"] = ".local_storage/db.json"
 
     db = TinyDB(st.session_state.get("local_db_path"))
-    File = Query()
-    settings = db.get(File.type == "settings")
+    settings = db.get(Query().type == "settings")
 
     if settings is not None:
         for key in settings:
@@ -24,8 +23,6 @@ def load_session_state_from_db():
     if "vector_store_path" not in st.session_state:
         st.session_state["vector_store_path"] = ".local_storage/chroma.db"
 
-    # st.toast("Settings loaded from file!", icon="📁")
-
 
 def save_session_to_db():
     db = TinyDB(
@@ -33,7 +30,6 @@ def save_session_to_db():
         sort_keys=True,
         indent=4,
     )
-    File = Query()
     db.upsert(
         {
             "type": "settings",
@@ -50,7 +46,7 @@ def save_session_to_db():
                 "local_db_path", ".local_storage/db.json"
             ),
         },
-        File.type == "settings",
+        Query().type == "settings",
     )
 
     st.toast("Settings saved to file!", icon="📁")

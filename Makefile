@@ -15,6 +15,9 @@ doctest:
 make poetry:
 	@(curl -sSL https://install.python-poetry.org | python3 -)
 
+make lint:
+	@(poetry run pylint dbt_llm_tools tests client)
+
 # install poetry and dependencies
 install:
 	@(poetry install; git config --local core.hooksPath .githooks/; mkdir -p .local_storage)

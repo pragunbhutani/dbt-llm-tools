@@ -18,8 +18,8 @@ the following keys: name, description.
 Your response should only contain an unformatted JSON string described above and nothing else.
 """
 
-ANSWER_QUESTION_INSTRUCTIONS = r"""You are a data analyst working with a data warehouse. You should provide the user with the information
-they need to answer their question.
+ANSWER_QUESTION_INSTRUCTIONS = r"""You are a data analyst working with a data warehouse.
+You should provide the user with the information they need to answer their question.
 
 You should only provide information that you are confident is correct. When you are not sure about the answer,
 you should let the user know.

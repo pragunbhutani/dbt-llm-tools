@@ -1,11 +1,11 @@
 import streamlit as st
 from openai import OpenAI
 
-from dbt_llm_tools import VectorStore
-from dbt_llm_tools.instructions import ANSWER_QUESTION_INSTRUCTIONS
-
 from menu import menu
 from settings import load_session_state_from_db
+
+from dbt_llm_tools import VectorStore
+from dbt_llm_tools.instructions import ANSWER_QUESTION_INSTRUCTIONS
 
 st.set_page_config(page_title="Chatbot", page_icon="🤖", layout="wide")
 
@@ -92,7 +92,7 @@ if prompt := st.chat_input("What is up?", disabled=CHATBOT_DISABLED):
                 st.session_state.closest_model_names.append(model["id"])
 
     with st.chat_message("assistant"):
-        stream = client.chat.completions.create(
+        stream = client.chat.completions.create(  # pylint: disable=invalid-name
             model=st.session_state["openai_chatbot_model"],
             messages=[
                 {"role": m["role"], "content": m["content"]}
