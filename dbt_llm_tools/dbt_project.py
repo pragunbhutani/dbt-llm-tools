@@ -38,15 +38,15 @@ class DbtProject:
             update_model_directory: Update a model in the directory.
         """
         self.__project_root = dbt_project_root
-        project_file = os.path.join(dbt_project_root, "dbt_project.yml")
+        dbt_project_file = os.path.join(dbt_project_root, "dbt_project.yml")
 
-        if not os.path.isfile(project_file):
+        if not os.path.isfile(dbt_project_file):
             raise Exception("No dbt project found in the specified folder")
 
         self.__database_path = database_path
         os.makedirs(os.path.dirname(database_path), exist_ok=True)
 
-        with open(project_file, encoding="utf-8") as f:
+        with open(dbt_project_file, encoding="utf-8") as f:
             project_config = yaml.safe_load(f)
             self.__model_paths = project_config.get("model-paths", ["models"])
 
