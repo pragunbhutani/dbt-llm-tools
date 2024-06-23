@@ -43,7 +43,7 @@ else:
 
 # Set a default model
 if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "gpt-4-turbo"
+    st.session_state["openai_model"] = "gpt-4o"
 
 # Initialize chat history
 if "messages" not in st.session_state:

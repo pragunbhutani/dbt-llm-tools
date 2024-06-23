@@ -71,7 +71,7 @@ st.text("Select your OpenAI language model and embedding model.")
 
 if openai_chatbot_model := st.selectbox(
     "Chatbot Model",
-    ("gpt-4-turbo", "gpt-4", "gpt-3.5-turbo"),
+    ("gpt-4o", "gpt-4-turbo", "gpt-4", "gpt-3.5-turbo"),
     help="The model you select will be used to generate responses for your chatbot.",
 ):
     st.session_state["openai_chatbot_model"] = openai_chatbot_model
