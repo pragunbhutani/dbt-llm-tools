@@ -15,7 +15,7 @@ def load_session_state_from_db():
                 st.session_state[key] = settings[key]
 
     if "openai_chatbot_model" not in st.session_state:
-        st.session_state["openai_chatbot_model"] = "gpt-4-turbo"
+        st.session_state["openai_chatbot_model"] = "gpt-4o"
 
     if "openai_embedding_model" not in st.session_state:
         st.session_state["openai_embedding_model"] = "text-embedding-3-large"
