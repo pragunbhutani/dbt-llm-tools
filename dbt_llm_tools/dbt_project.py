@@ -10,7 +10,7 @@ from tinydb import TinyDB, Query
 
 from dbt_llm_tools.types import DbtModelDirectoryEntry, DbtProjectDirectory
 
-SOURCE_SEARCH_EXPRESSION = r"source\(['\"]*(.*?)['\"]*?\)"
+SOURCE_SEARCH_EXPRESSION = r"source\(['\"]*(.*?)['\"]*,\s*['\"]*(.*?)['\"]*\)"
 REF_SEARCH_EXPRESSION = r"ref\(['\"]*(.*?)['\"]*\)"
 
 
@@ -130,13 +130,9 @@ class DbtProject:
         with open(sql_file, encoding="utf-8") as f:
             sql_contents = f.read()
 
-        sources = []
         source_search = re.findall(SOURCE_SEARCH_EXPRESSION, sql_contents)
 
-        for raw_source in source_search:
-            source = raw_source.replace("'", "").replace('"', "").split(",")
-            if len(source) == 2:
-                sources.append({"name": source[0], "table": source[1]})
+        sources = [{"name": match[0], "table": match[1]} for match in source_search]
 
         return {
             "type": "model",
