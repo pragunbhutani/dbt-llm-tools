@@ -3936,6 +3936,41 @@ files = [
 ]
 
 [[package]]
+name = "slack-bolt"
+version = "1.18.1"
+description = "The Bolt Framework for Python"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "slack_bolt-1.18.1-py2.py3-none-any.whl", hash = "sha256:2509e5bb43898a593667bf37965057a9b9a41008b29628e3b57a6136b650b90e"},
+    {file = "slack_bolt-1.18.1.tar.gz", hash = "sha256:694f84a81ba1c4c428ba7daa01d599d3e9fba7a54ad10c11008aa22573b23ff0"},
+]
+
+[package.dependencies]
+slack-sdk = ">=3.25.0,<4"
+
+[package.extras]
+adapter = ["CherryPy (>=18,<19)", "Django (>=3,<5)", "Flask (>=1,<3)", "Werkzeug (>=2,<3)", "boto3 (<=2)", "bottle (>=0.12,<1)", "chalice (>=1.28,<2)", "falcon (>=2,<4)", "fastapi (>=0.70.0,<1)", "gunicorn (>=20,<21)", "pyramid (>=1,<3)", "sanic (>=22,<23)", "starlette (>=0.14,<1)", "tornado (>=6,<7)", "uvicorn (<1)", "websocket-client (>=1.2.3,<2)"]
+adapter-testing = ["Flask (>=1,<2)", "Werkzeug (>=1,<2)", "boddle (>=0.2,<0.3)", "docker (>=5,<6)", "moto (>=3,<4)", "requests (>=2,<3)", "sanic-testing (>=0.7)"]
+async = ["aiohttp (>=3,<4)", "websockets (>=10,<11)"]
+testing = ["Flask-Sockets (>=0.2,<1)", "Jinja2 (==3.0.3)", "Werkzeug (>=1,<2)", "aiohttp (>=3,<4)", "black (==22.8.0)", "click (<=8.0.4)", "itsdangerous (==2.0.1)", "pytest (>=6.2.5,<7)", "pytest-asyncio (>=0.18.2,<1)", "pytest-cov (>=3,<4)"]
+testing-without-asyncio = ["Flask-Sockets (>=0.2,<1)", "Jinja2 (==3.0.3)", "Werkzeug (>=1,<2)", "black (==22.8.0)", "click (<=8.0.4)", "itsdangerous (==2.0.1)", "pytest (>=6.2.5,<7)", "pytest-cov (>=3,<4)"]
+
+[[package]]
+name = "slack-sdk"
+version = "3.27.2"
+description = "The Slack API Platform SDK for Python"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "slack_sdk-3.27.2-py2.py3-none-any.whl", hash = "sha256:af97158e6ac7f667e158e8036e63dc1f79db9bd36216a33c10fcc49be7c2f30c"},
+    {file = "slack_sdk-3.27.2.tar.gz", hash = "sha256:bb145bf2bd93b60a17cd55c05cb15868c9a07d845b6fb608c798b50bce21cb99"},
+]
+
+[package.extras]
+optional = ["SQLAlchemy (>=1.4,<3)", "aiodns (>1.0)", "aiohttp (>=3.7.3,<4)", "boto3 (<=2)", "websocket-client (>=1,<2)", "websockets (>=9.1,<13)"]
+
+[[package]]
 name = "smmap"
 version = "5.0.1"
 description = "A pure Python implementation of a sliding window memory map manager"
@@ -5025,4 +5060,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "0e5b7ab4041772ca980d0adcfaafab6aa69642a399788c8701cc506972a74257"
+content-hash = "136a7cd8a039a560dcf73e257f2344a96247c866cc9c9049df59ae78f67555ce"

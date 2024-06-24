@@ -32,6 +32,7 @@ PyYAML = "^6.0.1"
 typing-extensions = "^4.10.0"
 streamlit = "^1.33.0"
 tinydb = "^4.8.0"
+slack-bolt = "^1.18.1"
 
 [tool.poetry.group.dev.dependencies]
 pylint = "^3.1.0"
