@@ -113,5 +113,3 @@ The Chatbot is based on the concept of Retrieval Augmented Generation and basica
 ## Partners
 
 * [JIIT's Open Source Developers Community](https://github.com/osdc)
-
-
