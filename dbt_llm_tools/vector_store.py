@@ -149,16 +149,15 @@ class VectorStore:
         Returns:
             list[DbtModel]: A list of dbt model objects retrieved from the vector store.
         """
-        models = []
         model_embeddings = self.__collection.get(ids=model_ids)
 
-        for i in range(len(model_embeddings["ids"])):
-            models.append(
-                {
-                    "id": model_embeddings["ids"][i],
-                    "document": model_embeddings["documents"][i],
-                }
-            )
+        models = [
+            {
+                "id": model_embeddings["ids"][i],
+                "document": model_embeddings["documents"][i],
+            }
+            for i in range(len(model_embeddings["ids"]))
+        ]
 
         return models
 
