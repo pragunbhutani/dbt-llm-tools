@@ -110,9 +110,8 @@ The Chatbot is based on the concept of Retrieval Augmented Generation and basica
 - These models are then fed into ChatGPT as a prompt, along with some basic instructions and your question.
 - The response is returned to you as a string.
 
-## Contributors
+## Partners
 
-* [Pragun Bhutani](https://github.com/pragunbhutani) (Initial author and maintainer)
 * [JIIT's Open Source Developers Community](https://github.com/osdc)
 
 
