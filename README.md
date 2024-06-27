@@ -1,55 +1,67 @@
-# dbt-llm-tools
+# dbt-llm-tools aka. ragstar
 
-LLM based tools for dbt projects. Answer data questions, generate documentation and more.
-The library comes with a streamlit interface that allows you to interact with your dbt project via a UI.
+**LLM-based tools for dbt projects**
 
-In addition, you can also access the underlying classes that enable you to:
-
-- Chatbot: ask questions about data and get answers based on your dbt model documentation
-- Documentation Generator: generate documentation for dbt models based on model and upstream model definition.
+dbt-llm-tools, also known as ragstar, provides a suite of tools powered by Large Language Models (LLMs) to enhance your dbt project workflow. It allows you to ask questions about your data and generate documentation for your models.
 
 **Here is a quick demo of how the Chatbot works:**
 
 https://www.loom.com/share/abb0612c4e884d4cb8fabc22af964e7e?sid=f5f8c0e6-51f5-4afc-a7bf-51e9e182c2e7
 
-## Get Started
+### Key functionalities
 
-You can install `dbt-llm-tools` with the UI and interact with your project via a streamlit interface.
-Alternatively, you can also install without the UI to use the underlying classes only.
+* **Chatbot:** Ask questions about your data directly using the chatbot. It leverages your dbt model documentation to provide insightful answers.
+* **Documentation Generator:** Generate comprehensive documentation for your dbt models, including descriptions and lineage information.
 
-### Option 1 - With UI
 
-To install with the UI:
+### Getting Started
 
-1. Clone the repository on your computer: `gh repo clone pragunbhutani/dbt-llm-tools`
-2. `cd` into the repository: `cd dbt-llm-tools`
-3. The project uses poetry to install dependencies. If you don't have poetry installed already, run `make poetry`.
-   - Remember to add the poetry executable to your $PATH and refresh your terminal.
-4. Run `make install` to download and set up all of the dependencies
-   - (optional) Download an example dbt project with `make fetch_example_project`.
-5. Run the client with `make run_client`
+To install `dbt-llm-tools` with the UI:
 
-You should then be able to see the client run in your browser at `http://localhost:8501/app`
+1. Clone the repository:
+   ```bash
+   gh repo clone pragunbhutani/dbt-llm-tools
+   ```
+2. Navigate to the project directory:
+   ```bash
+   cd dbt-llm-tools
+   ```
+3. Install dependencies (assuming Poetry is installed):
+   ```bash
+   make poetry
+   ```
+   - Add the poetry executable to your PATH and refresh the terminal.
+4. Install and optionally download an example project:
+   ```bash
+   make install
+   make fetch_example_project (optional)
+   ```
+5. Run the UI:
+   ```bash
+   make run_client
+   ```
+6. Optional Step (if any dependency error shows up) :
+   ```bash
+   pip install dbt-llm-tools
+   ```
 
-**Note** - To use the tools, you'll need an OpenAI API Key.
+This will launch the client in your browser at `http://localhost:8501/app`.
 
-### Option 2 - Without UI
+**Note:** An OpenAI API key is required to use the tools.
 
-dbt-llm-tools can be installed via pip.
+### Documentation
 
-```
-pip install dbt-llm-tools
-```
+For detailed instructions and API reference, refer to the official documentation: [https://dbt-llm-tools.readthedocs.io/en/latest/](https://dbt-llm-tools.readthedocs.io/en/latest/)
 
-## Documentation
+### Classes
 
-The following shows you examples of how to use the two main classes of `dbt-llm-tools`. You can also find full documentation for these and all other classes at https://dbt-llm-tools.readthedocs.io/en/latest/
+* **Chatbot:**
+  - Loads your dbt project information and creates a local vector store.
+  - Allows you to ask questions about your data.
+  - Retrieves relevant models and utilizes ChatGPT to generate responses.
+  - Currently supports OpenAI ChatGPT models.
 
-### Class - Chatbot
-
-How to load your dbt project into the Chatbot and ask questions about your data.
-
-```Python
+```python
 from dbt_llm_tools import Chatbot
 
 # Instantiate a chatbot object
@@ -68,23 +80,11 @@ response = chatbot.ask_question(
 print(response)
 ```
 
-**Note**: dbt-llm-tools currently only supports OpenAI ChatGPT models for generating embeddings and responses to queries.
+* **Documentation Generator:**
+  - Generates documentation for your dbt models and their dependencies.
+  - Requires your OpenAI API key.
 
-#### How it works
-
-The Chatbot is based on the concept of Retrieval Augmented Generation and basically works as follows:
-
-- When you call the `chatbot.load_models()` method, the bot scans all the folders in the locations specified by you for dbt YML files.
-- It then converts all the models into a text description, which are stored as embeddings in a vector database. The bot currently only supports [ChromaDB](https://www.trychroma.com/) as a vector db, which is persisted in a file on your local machine.
-- When you ask a query, it fetches 3 models whose description is found to be the most relevant for your query.
-- These models are then fed into ChatGPT as a prompt, along with some basic instructions and your question.
-- The response is returned to you as a string.
-
-### Class - Documentation Generator
-
-How to load your dbt project into the Documentation Generator and have it write documentation for your models.
-
-```Python
+```python
 from dbt_llm_tools import DocumentationGenerator
 
 # Instantiate a Documentation Generator object
@@ -99,3 +99,17 @@ doc_gen.generate_documentation(
 	write_documentation_to_yaml=False
 )
 ```
+
+#### How it works
+
+The Chatbot is based on the concept of Retrieval Augmented Generation and basically works as follows:
+
+- When you call the `chatbot.load_models()` method, the bot scans all the folders in the locations specified by you for dbt YML files.
+- It then converts all the models into a text description, which are stored as embeddings in a vector database. The bot currently only supports [ChromaDB](https://www.trychroma.com/) as a vector db, which is persisted in a file on your local machine.
+- When you ask a query, it fetches 3 models whose description is found to be the most relevant for your query.
+- These models are then fed into ChatGPT as a prompt, along with some basic instructions and your question.
+- The response is returned to you as a string.
+
+## Partners
+
+* [JIIT's Open Source Developers Community](https://github.com/osdc)
