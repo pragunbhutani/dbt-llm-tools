@@ -24,11 +24,6 @@ vector_store = VectorStore(
     openai_api_key=st.session_state.get("openai_api_key", ""),
 )
 
-
-def get_matching_models(query):
-    return vector_store.query_collection(query=query, n_results=4)
-
-
 st.title("Question Answerer")
 st.text("Ask a chatbot questions about your data!")
 
@@ -71,7 +66,7 @@ if prompt := st.chat_input("What is up?", disabled=CHATBOT_DISABLED):
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    closest_models = get_matching_models(prompt)
+    closest_models = vector_store.query_collection(query=prompt, n_results=4)
 
     if closest_models:
         st.session_state.messages.append(
