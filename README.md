@@ -35,9 +35,9 @@ To install `dbt-llm-tools` with the UI:
    ```bash
    make install
    ```
-5. Install an example project:
+5. Install an example project (optional):
    ```bash
-   make fetch_example_project (optional)
+   make fetch_example_project
    ```
 6. Run the UI:
    ```bash
