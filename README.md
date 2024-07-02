@@ -43,10 +43,6 @@ To install `dbt-llm-tools` with the UI:
    ```bash
    make run_client
    ```
-7. Optional Step (if any dependency error shows up) :
-   ```bash
-   pip install dbt-llm-tools
-   ```
 
 This will launch the client in your browser at `http://localhost:8501/app`.
 
