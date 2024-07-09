@@ -1,5 +1,45 @@
 import streamlit as st
 from tinydb import TinyDB, Query
+from dotenv import load_dotenv
+import os
+import psycopg2 
+from psycopg2 import sql
+
+load_dotenv()
+
+
+
+def load_session_state_from_pg():
+    db_params = {
+    'dbname': os.environ['DBNAME'],
+    'user': os.environ['DB_USER'],
+    'password': os.environ['PSWD'],
+    'host': os.environ['HOST'],
+    'port': os.environ['PORT']
+    }
+    conn = psycopg2.connect(**db_params)
+    cur = conn.cursor()
+    
+    cur.execute("SELECT * FROM settings")
+    settings = cur.fetchone()
+
+    if settings:
+        columns = [desc[0] for desc in cur.description]
+        settings_dict = dict(zip(columns, settings))
+        for key, value in settings_dict.items():
+            st.session_state[key] = value
+
+    cur.close()
+    conn.close()
+
+    if "openai_chatbot_model" not in st.session_state:
+        st.session_state["openai_chatbot_model"] = "gpt-4o"
+
+    if "openai_embedding_model" not in st.session_state:
+        st.session_state["openai_embedding_model"] = "text-embedding-3-large"
+
+    if "vector_store_path" not in st.session_state:
+        st.session_state["vector_store_path"] = ".local_storage/chroma.db"
 
 
 def load_session_state_from_db():
@@ -50,3 +90,5 @@ def save_session_to_db():
     )
 
     st.toast("Settings saved to file!", icon="📁")
+
+load_session_state_from_pg()

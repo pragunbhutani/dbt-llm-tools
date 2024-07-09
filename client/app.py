@@ -2,9 +2,10 @@ import streamlit as st
 from tinydb import TinyDB, Query
 from tinydb.operations import set
 
+
 from menu import menu
 from styles import button_override
-from settings import load_session_state_from_db, save_session_to_db
+from settings import load_session_state_from_db, save_session_to_db, load_session_state_from_pg
 
 from dbt_llm_tools import DbtProject
 
@@ -25,7 +26,7 @@ st.text(
 
 menu()
 button_override()
-load_session_state_from_db()
+load_session_state_from_pg()
 
 if openai_api_key := st.text_input(
     label="OpenAI API Key",
