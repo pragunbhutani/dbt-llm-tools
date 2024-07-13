@@ -10,6 +10,7 @@ import json
 from tinydb import TinyDB, Query
 from dotenv import load_dotenv
 import psycopg2
+from psycopg2.extras import RealDictCursor
 import os
 
 from dbt_llm_tools.types import DbtModelDirectoryEntry, DbtProjectDirectory
@@ -177,7 +178,7 @@ class DbtProject:
                 models[model["name"]] = model
 
             for source in yaml_contents.get("sources", []):
-                source["type"] = "source"
+                # source["type"] = "source"
                 source["yaml_path"] = yaml_path
                 sources[source["name"]] = source
 
@@ -190,8 +191,20 @@ class DbtProject:
         Returns:
             dict: The parsed directory.
         """
-        with open(self.__database_path, encoding="utf-8") as f:
-            return json.load(f)
+        db_params = {
+            "dbname": os.environ["DBNAME"],
+            "user": os.environ["DB_USER"],
+            "password": os.environ["PSWD"],
+            "host": os.environ["HOST"],
+            "port": os.environ["PORT"],
+        }
+        conn = psycopg2.connect(**db_params)
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        cur.execute("SELECT * FROM dbt_models;")
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+        return rows
 
     def __save_directory(self, directory):
         """
@@ -201,7 +214,6 @@ class DbtProject:
             directory (dict): The directory to save.
         """
         db = TinyDB(self.__database_path, sort_keys=True, indent=4)
-        Model = Query()  # pylint: disable=invalid-name
         Source = Query()  # pylint: disable=invalid-name
 
         db_params = {
@@ -213,10 +225,6 @@ class DbtProject:
         }
         conn = psycopg2.connect(**db_params)
         cur = conn.cursor()
-
-        for name, model in directory["models"].items():
-            if "name" in model:
-                db.upsert(model, Model.name == name)
 
         for name, model in directory["models"].items():
             if "name" in model:
@@ -329,28 +337,21 @@ class DbtProject:
         if model_name is None:
             raise Exception("No model name provided")
 
-        # directory = self.__get_directory()
-        db = TinyDB(self.__database_path)
-        Model = Query()  # pylint: disable=invalid-name
+        db_params = {
+            "dbname": os.environ["DBNAME"],
+            "user": os.environ["DB_USER"],
+            "password": os.environ["PSWD"],
+            "host": os.environ["HOST"],
+            "port": os.environ["PORT"],
+        }
+        conn = psycopg2.connect(**db_params)
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        cur.execute("SELECT * FROM dbt_models WHERE name = %s LIMIT 1;", (model_name,))
+        row = cur.fetchone()
+        cur.close()
+        conn.close()
 
-        # db_params = {
-        #     "dbname": os.environ["DBNAME"],
-        #     "user": os.environ["DB_USER"],
-        #     "password": os.environ["PSWD"],
-        #     "host": os.environ["HOST"],
-        #     "port": os.environ["PORT"],
-        # }
-        # conn = psycopg2.connect(**db_params)
-        # cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        # cur.execute("SELECT * FROM dbt_models WHERE name = %s LIMIT 1;", (model_name,))
-        # row = cur.fetchone()
-        # # convert the row to a dictionary?
-        # print(row, "\n", f"type: {type(row)}")
-        # cur.close()
-        # conn.close()
-        # return row
-
-        return db.get(Model.name == model_name)
+        return row
 
     def get_models(
         self,
@@ -371,19 +372,29 @@ class DbtProject:
         """
         searched_models = []
 
-        db = TinyDB(self.__database_path)
-        Model = Query()  # pylint: disable=invalid-name
-        File = Query()  # pylint: disable=invalid-name
+        db_params = {
+            "dbname": os.environ["DBNAME"],
+            "user": os.environ["DB_USER"],
+            "password": os.environ["PSWD"],
+            "host": os.environ["HOST"],
+            "port": os.environ["PORT"],
+        }
+        conn = psycopg2.connect(**db_params)
+        cur = conn.cursor(cursor_factory=RealDictCursor)
 
-        if models is None and included_folders is Nondbe:
-            searched_models = db.search(File.type == "model")
+        if models is None and included_folders is None:
+            # searched_models = db.search(File.type == "model")
+            cur.execute("SELECT * FROM dbt_models;")
+            searched_models = cur.fetchall()
 
         for model in models or []:
-            if model := db.get(Model.name == model):
+            cur.execute("SELECT * FROM dbt_models WHERE name=%s LIMIT 1;", (model,))
+            if model := cur.fetchone():
                 searched_models.append(model)
 
         for included_folder in included_folders or []:
-            for model in db.search(File.type == "model"):
+            cur.execute("SELECT * FROM dbt_models;", (model,))
+            for model in cur:
                 if included_folder in model.get(
                     "absolute_path", ""
                 ) or included_folder in model.get("yaml_path", ""):
@@ -395,7 +406,6 @@ class DbtProject:
                     "absolute_path", ""
                 ) or excluded_folder in model.get("yaml_path", ""):
                     searched_models.remove(model)
-
         return searched_models
 
     def update_model_directory(self, model: dict):
@@ -411,3 +421,12 @@ class DbtProject:
             directory["models"][model["name"]] = model
 
         self.__save_directory(directory)
+
+
+if __name__ == "__main__":
+    dbt_project = DbtProject(
+        dbt_project_root="/home/malik/Documents/Programming/dbt/dbt-llm-tools/example_dbt_project"
+    )
+    dbt_project.parse()
+    dbt_project.get_single_model("dim_customer")
+    dbt_project.get_models(models=["dim_customer"])
