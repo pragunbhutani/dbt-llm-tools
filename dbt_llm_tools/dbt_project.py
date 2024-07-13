@@ -5,13 +5,19 @@ import re
 from typing import Union
 
 import yaml
+import json
 
 from tinydb import TinyDB, Query
+from dotenv import load_dotenv
+import psycopg2
+import os
 
 from dbt_llm_tools.types import DbtModelDirectoryEntry, DbtProjectDirectory
 
 SOURCE_SEARCH_EXPRESSION = r"source\(['\"]*(.*?)['\"]*,\s*['\"]*(.*?)['\"]*\)"
 REF_SEARCH_EXPRESSION = r"ref\(['\"]*(.*?)['\"]*\)"
+
+load_dotenv()
 
 
 class DbtProject:
@@ -198,9 +204,75 @@ class DbtProject:
         Model = Query()  # pylint: disable=invalid-name
         Source = Query()  # pylint: disable=invalid-name
 
+        db_params = {
+            "dbname": os.environ["DBNAME"],
+            "user": os.environ["DB_USER"],
+            "password": os.environ["PSWD"],
+            "host": os.environ["HOST"],
+            "port": os.environ["PORT"],
+        }
+        conn = psycopg2.connect(**db_params)
+        cur = conn.cursor()
+
         for name, model in directory["models"].items():
             if "name" in model:
                 db.upsert(model, Model.name == name)
+
+        for name, model in directory["models"].items():
+            if "name" in model:
+                name = model["name"]
+                absolute_path = model["absolute_path"]
+                relative_path = model["relative_path"]
+                documentation = model.get("documentation")
+                deps = [dep for dep in model["deps"]]
+                refs = [ref for ref in model["refs"]]
+                sources = model.get("sources")
+                sql_contents = model["sql_contents"]
+                yaml_path = model.get("yaml_path")
+
+                cur.execute(
+                    """
+                INSERT INTO dbt_models (
+                    NAME,
+                    absolute_path,
+                    relative_path,
+                    documentation,
+                    deps,
+                    refs,
+                    sources,
+                    sql_contents,
+                    yaml_path
+                )
+                VALUES(%s,%s,%s,%s::jsonb,%s,%s,%s::jsonb,%s,%s)
+                ON CONFLICT (NAME)
+                DO UPDATE SET
+                absolute_path = EXCLUDED.absolute_path,
+                relative_path = EXCLUDED.relative_path,
+                documentation = EXCLUDED.documentation,
+                deps = EXCLUDED.deps,
+                refs = EXCLUDED.refs,
+                sources = EXCLUDED.sources,
+                sql_contents = EXCLUDED.sql_contents,
+                yaml_path = EXCLUDED.yaml_path;""",
+                    (
+                        name,
+                        absolute_path,
+                        relative_path,
+                        json.dumps(documentation),
+                        deps,
+                        refs,
+                        json.dumps(sources),
+                        sql_contents,
+                        yaml_path,
+                    ),
+                )
+
+        conn.commit()
+        if conn:
+            conn.rollback()
+
+        cur.close()
+        conn.close()
 
         for name, source in directory["sources"].items():
             if "name" in source:
@@ -261,6 +333,23 @@ class DbtProject:
         db = TinyDB(self.__database_path)
         Model = Query()  # pylint: disable=invalid-name
 
+        # db_params = {
+        #     "dbname": os.environ["DBNAME"],
+        #     "user": os.environ["DB_USER"],
+        #     "password": os.environ["PSWD"],
+        #     "host": os.environ["HOST"],
+        #     "port": os.environ["PORT"],
+        # }
+        # conn = psycopg2.connect(**db_params)
+        # cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        # cur.execute("SELECT * FROM dbt_models WHERE name = %s LIMIT 1;", (model_name,))
+        # row = cur.fetchone()
+        # # convert the row to a dictionary?
+        # print(row, "\n", f"type: {type(row)}")
+        # cur.close()
+        # conn.close()
+        # return row
+
         return db.get(Model.name == model_name)
 
     def get_models(
@@ -286,7 +375,7 @@ class DbtProject:
         Model = Query()  # pylint: disable=invalid-name
         File = Query()  # pylint: disable=invalid-name
 
-        if models is None and included_folders is None:
+        if models is None and included_folders is Nondbe:
             searched_models = db.search(File.type == "model")
 
         for model in models or []:

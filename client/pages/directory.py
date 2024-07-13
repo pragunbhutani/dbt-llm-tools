@@ -1,8 +1,13 @@
 import streamlit as st
 from tinydb import TinyDB, Query
-
+import psycopg2
+from psycopg2.extras import RealDictCursor
+import os
+from dotenv import load_dotenv
+from pprint import pprint
 from menu import menu
 
+load_dotenv("../.env")
 st.set_page_config(page_title="DBT Project Directory", page_icon="🔍", layout="wide")
 
 menu()
@@ -12,8 +17,24 @@ st.title("DBT Project Directory")
 db = TinyDB(st.session_state.get("local_db_path", ".local_storage/db.json"))
 Document = Query()
 
-all_models = db.search(Document.type == "model")
+db_params = {
+    "dbname": os.environ["DBNAME"],
+    "user": os.environ["DB_USER"],
+    "password": os.environ["PSWD"],
+    "host": os.environ["HOST"],
+    "port": os.environ["PORT"],
+}
+conn = psycopg2.connect(**db_params)
+cur = conn.cursor(cursor_factory=RealDictCursor)
+cur.execute("SELECT * FROM dbt_models")
+all_models = cur.fetchall()
+# pprint(all_models)
+
+# all_models = db.search(Document.type == "model")
 all_sources = db.search(Document.type == "source")
+
+cur.close()
+conn.close()
 
 models_tab, sources_tab = st.tabs(["Models", "Sources"])
 
@@ -23,8 +44,8 @@ with models_tab:
     models_display = [
         {
             "name": model["name"],
-            "has_documentation": "✅" if "documentation" in model else "❌",
-            "has_interpretation": "✅" if "interpretation" in model else "❌",
+            "has_documentation": "✅" if model.get("documentation") is not None else "❌",
+            "has_interpretation": "✅" if model.get("interpretation") is not None else "❌",
             "path": model.get("relative_path", ""),
         }
         for model in all_models

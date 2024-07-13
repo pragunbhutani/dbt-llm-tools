@@ -1,7 +1,9 @@
 import streamlit as st
 from tinydb import TinyDB, Query
 from tinydb.operations import set
-
+from dotenv import load_dotenv
+import psycopg2
+import os
 
 from menu import menu
 from styles import button_override
@@ -9,9 +11,21 @@ from settings import load_session_state_from_db, save_session_to_db, load_sessio
 
 from dbt_llm_tools import DbtProject
 
+load_dotenv()
+
 st.set_page_config(page_title="dbt-llm-tools", page_icon="🤖", layout="wide")
 
 db = TinyDB(st.session_state.get("local_db_path", ".local_storage/db.json"))
+
+db_params = {
+    'dbname': os.environ['DBNAME'],
+    'user': os.environ['DB_USER'],
+    'password': os.environ['PSWD'],
+    'host': os.environ['HOST'],
+    'port': os.environ['PORT']
+    }
+conn = psycopg2.connect(**db_params)
+cur = conn.cursor()
 
 st.title("Welcome to dbt-llm-tools 👋")
 
@@ -37,6 +51,11 @@ if openai_api_key := st.text_input(
     st.session_state["openai_api_key"] = openai_api_key
     db.update(set("openai_api_key", openai_api_key), Query().type == "settings")
 
+    cur.execute("UPDATE settings SET openai_api_key=(%s);", (openai_api_key,))
+    conn.commit()
+    if conn:
+        conn.rollback()
+
 
 if dbt_project_root := st.text_input(
     label="DBT Project Root",
@@ -44,8 +63,13 @@ if dbt_project_root := st.text_input(
     value=st.session_state.get("dbt_project_root", ""),
 ):
     st.session_state["dbt_project_root"] = dbt_project_root
-
     db.update(set("dbt_project_root", dbt_project_root), Query().type == "settings")
+
+    cur.execute("UPDATE settings SET dbt_project_root=(%s);", (dbt_project_root,))
+    conn.commit()
+    if conn:
+        conn.rollback()
+
 
 st.caption("")
 
@@ -79,6 +103,10 @@ if openai_chatbot_model := st.selectbox(
     db.update(
         set("openai_chatbot_model", openai_chatbot_model), Query().type == "settings"
     )
+    cur.execute("UPDATE settings SET openai_chatbot_model=(%s);", (openai_chatbot_model,))
+    conn.commit()
+    if conn:
+        conn.rollback()
 
 if openai_embedding_model := st.selectbox(
     "Embedding Model",
@@ -90,6 +118,10 @@ if openai_embedding_model := st.selectbox(
         set("openai_embedding_model", openai_embedding_model),
         Query().type == "settings",
     )
+    cur.execute("UPDATE settings SET openai_embedding_model=(%s);", (openai_embedding_model,))
+    conn.commit()
+    if conn:
+        conn.rollback()
 
 st.caption("")
 
@@ -101,7 +133,7 @@ st.text("Choose where you would like to store your project data.")
 st.caption("")
 
 if st.button(
-    "Reset local storage",
+    "Reset storage",
     disabled="local_db_path" not in st.session_state,
     type="primary",
 ):
@@ -111,6 +143,14 @@ if st.button(
     db.remove(File.type == "model")
     db.remove(File.type == "source")
 
+    cur.execute("DELETE FROM settings;")
+    cur.execute("DELETE FROM dbt_models;")
+
+    conn.commit()
+    if conn:
+        conn.rollback()
     st.toast("Settings cleared from file!", icon="📁")
 
 st.divider()
+cur.close()
+conn.close()

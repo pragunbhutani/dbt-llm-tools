@@ -2,24 +2,24 @@ import streamlit as st
 from tinydb import TinyDB, Query
 from dotenv import load_dotenv
 import os
-import psycopg2 
+import psycopg2
 from psycopg2 import sql
 
 load_dotenv()
-
+db_params = {
+    "dbname": os.environ["DBNAME"],
+    "user": os.environ["DB_USER"],
+    "password": os.environ["PSWD"],
+    "host": os.environ["HOST"],
+    "port": os.environ["PORT"],
+}
 
 
 def load_session_state_from_pg():
-    db_params = {
-    'dbname': os.environ['DBNAME'],
-    'user': os.environ['DB_USER'],
-    'password': os.environ['PSWD'],
-    'host': os.environ['HOST'],
-    'port': os.environ['PORT']
-    }
+
     conn = psycopg2.connect(**db_params)
     cur = conn.cursor()
-    
+
     cur.execute("SELECT * FROM settings")
     settings = cur.fetchone()
 
@@ -89,6 +89,29 @@ def save_session_to_db():
         Query().type == "settings",
     )
 
-    st.toast("Settings saved to file!", icon="📁")
+    conn = psycopg2.connect(**db_params)
+    cur = conn.cursor()
+    cur.execute("DELETE FROM settings;")
+    cur.execute(
+        """
+                INSERT INTO settings (
+                    dbt_project_root,
+                    openai_api_key,
+                    openai_chatbot_model,
+                    openai_embedding_model,
+                    vector_store_path,
+                    local_db_path
+                )
+                VALUES (%s, %s, %s, %s, %s, %s);
+         """,
+        (
+            st.session_state.get("dbt_project_root", ""),
+            st.session_state.get("openai_api_key", ""),
+            st.session_state.get("openai_chatbot_model", ""),
+            st.session_state.get("openai_embedding_model", ""),
+            st.session_state.get("vector_store_path", ".local_storage"),
+            st.session_state.get("local_db_path", ".local_storage/db.json"),
+        )
+    )
 
-load_session_state_from_pg()
+    st.toast("Settings saved to database!", icon="📁")
