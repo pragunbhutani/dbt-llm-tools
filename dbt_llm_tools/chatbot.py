@@ -32,7 +32,7 @@ class Chatbot:
         database_path: str = ".local_storage/db.json",
         vector_db_path: str = ".local_storage/chroma.db",
         embedding_model: str = "text-embedding-3-large",
-        chatbot_model: str = "gpt-4-turbo",
+        chatbot_model: str = "gpt-4o",
     ) -> None:
         """
         Initializes a chatbot object along with a default set of instructions.
@@ -53,7 +53,7 @@ class Chatbot:
 
             chatbot_model (str, optional):
                 The name of the OpenAI chatbot model to be used.
-                Defaults to "gpt-4-turbo-preview".
+                Defaults to "gpt-4o".
 
         Returns:
             None

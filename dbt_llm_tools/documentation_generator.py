@@ -27,7 +27,7 @@ class DocumentationGenerator:
         self,
         dbt_project_root: str,
         openai_api_key: str,
-        language_model: str = "gpt-4-turbo-preview",
+        language_model: str = "gpt-4o",
         database_path: str = "./directory.json",
     ) -> None:
         """
@@ -37,7 +37,7 @@ class DocumentationGenerator:
             dbt_project_root (str): Root of the dbt project
             openai_api_key (str): OpenAI API key
             language_model (str, optional): The language model to use for generating documentation.
-            Defaults to "gpt-4-turbo-preview".
+            Defaults to "gpt-4o".
             database_path (str, optional): Path to the directory file that stores the parsed dbt project.
             Defaults to "./directory.json".
 
