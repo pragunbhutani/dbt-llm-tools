@@ -20,7 +20,7 @@ make lint:
 
 # install poetry and dependencies
 install:
-	@(poetry install; git config --local core.hooksPath .githooks/; mkdir -p .local_storage)
+	@(poetry install; pre-commit install; mkdir -p .local_storage)
 
 # Fetch the open source project from GitLab as an example to play with.
 fetch_example_project:
