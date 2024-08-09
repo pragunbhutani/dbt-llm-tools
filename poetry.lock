@@ -2758,6 +2758,16 @@ files = [
 ]
 
 [[package]]
+name = "peewee"
+version = "3.17.6"
+description = "a little orm"
+optional = false
+python-versions = "*"
+files = [
+    {file = "peewee-3.17.6.tar.gz", hash = "sha256:cea5592c6f4da1592b7cff8eaf655be6648a1f5857469e30037bf920c03fb8fb"},
+]
+
+[[package]]
 name = "pexpect"
 version = "4.9.0"
 description = "Pexpect allows easy control of interactive console applications."
@@ -5109,4 +5119,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "be5d8b7778d42705f52d158a95cddcc08530da955275245ba7b8754c8559457e"
+content-hash = "36690faf5d943788e6c1fc6d51651b3a7a0fccefb4434399e3b6f7d99f55f6c6"
