@@ -398,9 +398,16 @@ function SnowflakeConfigForm({
           } else {
             try {
               const errorData = JSON.parse(responseText);
-              errorMessage =
-                errorData.error ||
-                `HTTP ${response.status}: ${response.statusText}`;
+              // Handle connection test failures specifically
+              if (errorData.error && errorData.test_result) {
+                const testMessage =
+                  errorData.test_result.message || "Unknown connection error";
+                errorMessage = `Connection test failed: ${testMessage}`;
+              } else {
+                errorMessage =
+                  errorData.error ||
+                  `HTTP ${response.status}: ${response.statusText}`;
+              }
             } catch (jsonError) {
               errorMessage =
                 responseText ||
@@ -448,8 +455,9 @@ function SnowflakeConfigForm({
               disabled={isLoading}
             />
             <p className="text-xs text-gray-500 mt-1">
-              Your Snowflake account identifier (e.g.
-              mycompany.snowflakecomputing.com)
+              Your Snowflake account identifier (e.g. mycompany or
+              mycompany.us-west-2.aws). Do not include '.snowflakecomputing.com'
+              suffix.
             </p>
           </div>
 
@@ -566,9 +574,19 @@ function SnowflakeConfigForm({
             <li>Log into your Snowflake account</li>
             <li>Create a user with appropriate permissions for data access</li>
             <li>
-              Note your account identifier (visible in your Snowflake URL)
+              Find your account identifier in your Snowflake URL. For example,
+              if your URL is
+              <code className="bg-blue-100 px-1 rounded">
+                https://abc123.snowflakecomputing.com
+              </code>
+              , your account identifier is{" "}
+              <code className="bg-blue-100 px-1 rounded">abc123</code>
             </li>
             <li>Enter the warehouse, database, and schema you want to use</li>
+            <li>
+              <strong>Important:</strong> Only enter the account identifier, not
+              the full URL
+            </li>
           </ol>
         </div>
       </div>

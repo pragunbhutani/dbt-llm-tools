@@ -602,6 +602,18 @@ class SnowflakeIntegrationViewSet(viewsets.ViewSet):
         database = request.data.get("database")
         schema = request.data.get("schema", "PUBLIC")
 
+        # Clean up account name if user entered full hostname
+        if account:
+            account = account.strip()
+            # Remove .snowflakecomputing.com suffix if present to avoid duplication
+            if account.endswith(".snowflakecomputing.com"):
+                account = account[: -len(".snowflakecomputing.com")]
+            # Also remove any other common suffixes that might cause issues
+            for suffix in [".snowflakecomputing.com", ".aws.snowflakecomputing.com"]:
+                if account.endswith(suffix):
+                    account = account[: -len(suffix)]
+                    break
+
         # Validate required fields
         if not all([account, user_field, password, warehouse]):
             return Response(
