@@ -134,7 +134,7 @@ class SQLVerifierWorkflow:
 
             if snowflake_integration and snowflake_integration.is_configured():
                 # Get credentials from the integration
-                credentials = snowflake_integration.org_integration.credentials
+                credentials = snowflake_integration.cleaned_credentials
                 self.snowflake_creds = {
                     "account": credentials.get("account"),
                     "user": credentials.get("user"),

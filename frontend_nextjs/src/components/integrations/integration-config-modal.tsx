@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import {
   Dialog,
@@ -138,8 +138,32 @@ export function IntegrationConfigModal({
         </DialogHeader>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-md p-3">
-            <p className="text-sm text-red-800">{error}</p>
+          <div
+            className="bg-red-50 border border-red-200 rounded-md p-3"
+            role="alert"
+            aria-live="polite"
+          >
+            <div className="flex items-start">
+              <div className="flex-shrink-0">
+                <svg
+                  className="h-5 w-5 text-red-400"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-red-800">
+                  Configuration Error
+                </h3>
+                <p className="mt-1 text-sm text-red-700">{error}</p>
+              </div>
+            </div>
           </div>
         )}
 
@@ -355,13 +379,49 @@ function SnowflakeConfigForm({
   const [database, setDatabase] = useState("");
   const [schema, setSchema] = useState("PUBLIC");
 
+  // Load existing configuration when modal opens
+  useEffect(() => {
+    const loadExistingConfig = async () => {
+      if (!session?.accessToken || !integration.is_configured) return;
+
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/integrations/snowflake/config/`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${session.accessToken}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          const configData = await response.json();
+          setAccount(configData.account || "");
+          setUser(configData.user || "");
+          setWarehouse(configData.warehouse || "");
+          setDatabase(configData.database || "");
+          setSchema(configData.schema || "PUBLIC");
+          // Note: password is not returned for security reasons
+        } else {
+          console.warn("Could not load existing Snowflake configuration");
+        }
+      } catch (error) {
+        console.error("Error loading Snowflake configuration:", error);
+      }
+    };
+
+    loadExistingConfig();
+  }, [session?.accessToken, integration.is_configured]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (
       !session?.accessToken ||
       !account.trim() ||
       !user.trim() ||
-      !password.trim() ||
+      (!integration.is_configured && !password.trim()) ||
       !warehouse.trim()
     )
       return;
@@ -381,7 +441,7 @@ function SnowflakeConfigForm({
           body: JSON.stringify({
             account: account.trim(),
             user: user.trim(),
-            password: password.trim(),
+            ...(password.trim() && { password: password.trim() }),
             warehouse: warehouse.trim(),
             database: database.trim() || null,
             schema: database.trim() ? schema.trim() || "PUBLIC" : null,
@@ -427,7 +487,19 @@ function SnowflakeConfigForm({
       onClose();
     } catch (error) {
       console.error("Snowflake setup error:", error);
-      setError(error instanceof Error ? error.message : "Configuration failed");
+      const errorMessage =
+        error instanceof Error ? error.message : "Configuration failed";
+      setError(errorMessage);
+
+      // Scroll error into view
+      setTimeout(() => {
+        const errorElement =
+          document.querySelector('[role="alert"]') ||
+          document.querySelector(".text-red-800");
+        if (errorElement) {
+          errorElement.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }, 100);
     } finally {
       setIsLoading(false);
     }
@@ -492,11 +564,20 @@ function SnowflakeConfigForm({
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter password..."
+              placeholder={
+                integration.is_configured
+                  ? "Enter new password (leave blank to keep current)"
+                  : "Enter password..."
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              required
+              required={!integration.is_configured}
               disabled={isLoading}
             />
+            {integration.is_configured && (
+              <p className="text-xs text-gray-500 mt-1">
+                Leave blank to keep your existing password
+              </p>
+            )}
           </div>
 
           <div>
@@ -606,7 +687,7 @@ function SnowflakeConfigForm({
             isLoading ||
             !account.trim() ||
             !user.trim() ||
-            !password.trim() ||
+            (!integration.is_configured && !password.trim()) ||
             !warehouse.trim()
           }
         >

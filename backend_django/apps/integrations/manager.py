@@ -311,9 +311,30 @@ class SnowflakeIntegration(BaseIntegration):
     def key(self) -> str:
         return "snowflake"
 
+    @property
+    def cleaned_credentials(self) -> dict:
+        """Return credentials with cleaned account name to prevent hostname duplication."""
+        credentials = self.org_integration.credentials.copy()
+
+        # Clean up account name if it has .snowflakecomputing.com suffix
+        account = credentials.get("account", "")
+        if account:
+            account = account.strip()
+            # Remove .snowflakecomputing.com suffix if present to avoid duplication
+            if account.endswith(".snowflakecomputing.com"):
+                account = account[: -len(".snowflakecomputing.com")]
+            # Also remove any other common suffixes that might cause issues
+            for suffix in [".snowflakecomputing.com", ".aws.snowflakecomputing.com"]:
+                if account.endswith(suffix):
+                    account = account[: -len(suffix)]
+                    break
+            credentials["account"] = account
+
+        return credentials
+
     def is_configured(self) -> bool:
         """Check if Snowflake credentials are configured."""
-        credentials = self.org_integration.credentials
+        credentials = self.cleaned_credentials
         return all(
             [
                 credentials.get("account"),
@@ -334,7 +355,7 @@ class SnowflakeIntegration(BaseIntegration):
         try:
             import snowflake.connector
 
-            credentials = self.org_integration.credentials
+            credentials = self.cleaned_credentials
             conn = snowflake.connector.connect(
                 account=credentials.get("account"),
                 user=credentials.get("user"),
@@ -449,19 +470,18 @@ class SnowflakeIntegration(BaseIntegration):
         """Get Snowflake connection."""
         import snowflake.connector
 
+        credentials = self.cleaned_credentials
         return snowflake.connector.connect(
-            account=self.org_integration.credentials.get("account"),
-            user=self.org_integration.credentials.get("user"),
-            password=self.org_integration.credentials.get("password"),
-            warehouse=self.org_integration.credentials.get("warehouse"),
+            account=credentials.get("account"),
+            user=credentials.get("user"),
+            password=credentials.get("password"),
+            warehouse=credentials.get("warehouse"),
             database=(
-                self.org_integration.credentials.get("database")
-                if self.org_integration.credentials.get("database")
-                else None
+                credentials.get("database") if credentials.get("database") else None
             ),
             schema=(
-                self.org_integration.credentials.get("schema", "PUBLIC")
-                if self.org_integration.credentials.get("database")
+                credentials.get("schema", "PUBLIC")
+                if credentials.get("database")
                 else None
             ),
         )

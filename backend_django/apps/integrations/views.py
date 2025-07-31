@@ -586,6 +586,62 @@ class SnowflakeIntegrationViewSet(viewsets.ViewSet):
 
     permission_classes = [IsAuthenticated]
 
+    @action(detail=False, methods=["get"])
+    def config(self, request):
+        """
+        Get existing Snowflake integration configuration for the user's organization.
+        Returns configuration without sensitive credentials.
+        """
+        user = request.user
+        organisation = user.organisation
+
+        try:
+            org_integration = OrganisationIntegration.objects.get(
+                organisation=organisation, integration_key="snowflake"
+            )
+
+            if not org_integration.is_enabled:
+                return Response(
+                    {"error": "Snowflake integration is not enabled"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+            # Get cleaned credentials but exclude sensitive data
+            from .manager import SnowflakeIntegration
+
+            integration = SnowflakeIntegration(org_integration)
+            credentials = integration.cleaned_credentials
+
+            # Return configuration without password
+            config_data = {
+                "account": credentials.get("account", ""),
+                "user": credentials.get("user", ""),
+                "warehouse": credentials.get("warehouse", ""),
+                "database": credentials.get("database", ""),
+                "schema": credentials.get("schema", "PUBLIC"),
+                "is_configured": integration.is_configured(),
+                "connection_status": (
+                    org_integration.last_test_result.get("success", False)
+                    if org_integration.last_test_result
+                    else False
+                ),
+                "last_tested_at": org_integration.last_tested_at,
+            }
+
+            return Response(config_data)
+
+        except OrganisationIntegration.DoesNotExist:
+            return Response(
+                {"error": "Snowflake integration not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            logger.error(f"Error fetching Snowflake config: {e}", exc_info=True)
+            return Response(
+                {"error": "Failed to fetch configuration"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
     @action(detail=False, methods=["post"])
     def setup(self, request):
         """
@@ -614,12 +670,33 @@ class SnowflakeIntegrationViewSet(viewsets.ViewSet):
                     account = account[: -len(suffix)]
                     break
 
-        # Validate required fields
-        if not all([account, user_field, password, warehouse]):
+        # Check if this is an update to existing integration
+        try:
+            existing_integration = OrganisationIntegration.objects.get(
+                organisation=organisation, integration_key="snowflake"
+            )
+            is_update = True
+        except OrganisationIntegration.DoesNotExist:
+            is_update = False
+
+        # Validate required fields (password is optional for updates)
+        required_fields = [account, user_field, warehouse]
+        if not is_update:
+            required_fields.append(password)
+
+        if not all(required_fields):
+            missing_fields = []
+            if not account:
+                missing_fields.append("account")
+            if not user_field:
+                missing_fields.append("user")
+            if not warehouse:
+                missing_fields.append("warehouse")
+            if not is_update and not password:
+                missing_fields.append("password")
+
             return Response(
-                {
-                    "error": "Missing required fields: account, user, password, warehouse"
-                },
+                {"error": f"Missing required fields: {', '.join(missing_fields)}"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -634,32 +711,31 @@ class SnowflakeIntegrationViewSet(viewsets.ViewSet):
                 },
             )
 
+            # Prepare credentials dictionary
+            credentials_dict = {
+                "account": account,
+                "user": user_field,
+                "warehouse": warehouse,
+                "database": database if database else None,
+                "schema": schema if database else None,
+            }
+
+            # Only update password if provided
+            if password:
+                credentials_dict["password"] = password
+            elif not created:
+                # Keep existing password for updates
+                existing_credentials = org_integration.credentials
+                credentials_dict["password"] = existing_credentials.get("password")
+
             if created:
                 # Set credentials using the new method
-                org_integration.set_credentials(
-                    {
-                        "account": account,
-                        "user": user_field,
-                        "password": password,
-                        "warehouse": warehouse,
-                        "database": database if database else None,
-                        "schema": schema if database else None,
-                    }
-                )
+                org_integration.set_credentials(credentials_dict)
             else:
                 # Update existing integration
                 org_integration.is_enabled = True
                 org_integration.configuration = {"schema": schema if database else None}
-                org_integration.set_credentials(
-                    {
-                        "account": account,
-                        "user": user_field,
-                        "password": password,
-                        "warehouse": warehouse,
-                        "database": database if database else None,
-                        "schema": schema if database else None,
-                    }
-                )
+                org_integration.set_credentials(credentials_dict)
                 org_integration.save()
 
             # Test the connection
@@ -698,6 +774,62 @@ class SnowflakeIntegrationViewSet(viewsets.ViewSet):
             logger.error(f"Snowflake setup error: {e}", exc_info=True)
             return Response(
                 {"error": f"Configuration failed: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    @action(detail=False, methods=["get"])
+    def config(self, request):
+        """
+        Get existing Snowflake integration configuration for the user's organization.
+        Returns configuration without sensitive credentials.
+        """
+        user = request.user
+        organisation = user.organisation
+
+        try:
+            org_integration = OrganisationIntegration.objects.get(
+                organisation=organisation, integration_key="snowflake"
+            )
+
+            if not org_integration.is_enabled:
+                return Response(
+                    {"error": "Snowflake integration is not enabled"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+            # Get cleaned credentials but exclude sensitive data
+            from .manager import SnowflakeIntegration
+
+            integration = SnowflakeIntegration(org_integration)
+            credentials = integration.cleaned_credentials
+
+            # Return configuration without password
+            config_data = {
+                "account": credentials.get("account", ""),
+                "user": credentials.get("user", ""),
+                "warehouse": credentials.get("warehouse", ""),
+                "database": credentials.get("database", ""),
+                "schema": credentials.get("schema", "PUBLIC"),
+                "is_configured": integration.is_configured(),
+                "connection_status": (
+                    org_integration.last_test_result.get("success", False)
+                    if org_integration.last_test_result
+                    else False
+                ),
+                "last_tested_at": org_integration.last_tested_at,
+            }
+
+            return Response(config_data)
+
+        except OrganisationIntegration.DoesNotExist:
+            return Response(
+                {"error": "Snowflake integration not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            logger.error(f"Error fetching Snowflake config: {e}", exc_info=True)
+            return Response(
+                {"error": "Failed to fetch configuration"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
