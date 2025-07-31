@@ -75,7 +75,7 @@ export default function GitHubConnection({
     if (owners && owners.length > 0 && !owner) {
       setOwner(owners[0].login);
     }
-  }, [owners]);
+  }, [owners, owner]);
 
   // Check for GitHub connection status
   const { data: githubStatus, error: githubStatusError } = useSWR(

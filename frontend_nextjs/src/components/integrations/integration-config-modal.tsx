@@ -528,8 +528,8 @@ function SnowflakeConfigForm({
             />
             <p className="text-xs text-gray-500 mt-1">
               Your Snowflake account identifier (e.g. mycompany or
-              mycompany.us-west-2.aws). Do not include '.snowflakecomputing.com'
-              suffix.
+              mycompany.us-west-2.aws). Do not include
+              &apos;.snowflakecomputing.com&apos; suffix.
             </p>
           </div>
 
