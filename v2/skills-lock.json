@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "skills": {
+    "ai-elements": {
+      "source": "vercel/ai-elements",
+      "sourceType": "github",
+      "computedHash": "84f3a2a57fa71ae5061786280987575d673792d6dda9a63941efb2795b83543a"
+    },
+    "ai-sdk": {
+      "source": "vercel/ai",
+      "sourceType": "github",
+      "computedHash": "58ce68f628890c3925aea2b5435a649251ac182057541045c68fc19a27aaa0ec"
+    },
+    "building-components": {
+      "source": "vercel/components.build",
+      "sourceType": "github",
+      "computedHash": "ca96444b70257eb3f4f4c76dfdd4a32312c835fe3c8755d2e3d75ac78d384bfd"
+    },
+    "find-skills": {
+      "source": "vercel-labs/skills",
+      "sourceType": "github",
+      "computedHash": "d31e234f0c90694a670222cdd1dafa853e051d7066beda389f1097c22dadd461"
+    },
+    "next-best-practices": {
+      "source": "vercel-labs/next-skills",
+      "sourceType": "github",
+      "computedHash": "515ba75178bd44875812d9a560bdf14651f86709f89cf1d4f209638e879807f3"
+    },
+    "shadcn": {
+      "source": "shadcn/ui",
+      "sourceType": "github",
+      "computedHash": "507f011a70e8b3ae242bdc0bb5b39fd91a1d4049a0f3c281991ccf84973d591c"
+    },
+    "slack-agent": {
+      "source": "vercel-labs/slack-agent-skill",
+      "sourceType": "github",
+      "computedHash": "61bbe24383873700163c8b5b0dd928e52792206b0d9ff777bb14fa5ff7c854cf"
+    },
+    "slack-messaging": {
+      "source": "anthropics/knowledge-work-plugins",
+      "sourceType": "github",
+      "computedHash": "c61468452cd59a348d0800ed5454c4206084d11089fffd14d77a685a29c7ba93"
+    },
+    "streamdown": {
+      "source": "vercel/streamdown",
+      "sourceType": "github",
+      "computedHash": "fb49b9edaf9d645d5fe56af9105050d7ae4765179d4996cb89efc049a7ecb000"
+    },
+    "vercel-react-best-practices": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "computedHash": "12bab0ca6a45898a9b7eed06260adfb1f91cddbba02c689b680cebb5d9c2420c"
+    },
+    "web-design-guidelines": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "computedHash": "a6a44d5498f7e8f68289902f3dedfc6f38ae0cee1e96527c80724cf27f727c2a"
+    }
+  }
+}

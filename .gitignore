@@ -21,7 +21,7 @@ downloads/
 eggs/
 .eggs/
 # Only ignore Python lib directories, not frontend lib directories
-backend_django/lib/
+v1/backend_django/lib/
 lib64/
 parts/
 sdist/
@@ -50,4 +50,17 @@ ENV/
 .Spotlight-V100
 .Trashes
 ehthumbs.db
-Thumbs.db 
+Thumbs.db
+
+# Node.js / Next.js
+node_modules/
+.next/
+.turbo/
+*.tsbuildinfo
+
+# Supabase
+.supabase/
+
+# v2 specific
+v2/.env.local
+v2/.env*.local

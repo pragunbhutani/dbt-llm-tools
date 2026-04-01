@@ -1,0 +1,156 @@
+{
+  "version": "1.0.0",
+  "steps": {
+    "node_modules/.pnpm/workflow@4.2.0-beta.74_@nestjs+common@11.1.17_reflect-metadata@0.2.2_rxjs@7.8.2__@nestj_72bbe10a17dd24b919bf31877dba95e9/node_modules/workflow/dist/internal/builtins.js": {
+      "__builtin_response_array_buffer": {
+        "stepId": "__builtin_response_array_buffer"
+      },
+      "__builtin_response_json": {
+        "stepId": "__builtin_response_json"
+      },
+      "__builtin_response_text": {
+        "stepId": "__builtin_response_text"
+      }
+    },
+    "src/workflows/embed-steps.ts": {
+      "embedAndUpsertBatch": {
+        "stepId": "step//./src/workflows/embed-steps//embedAndUpsertBatch"
+      },
+      "fetchModelsForEmbed": {
+        "stepId": "step//./src/workflows/embed-steps//fetchModelsForEmbed"
+      },
+      "fetchOpenAiKey": {
+        "stepId": "step//./src/workflows/embed-steps//fetchOpenAiKey"
+      },
+      "fetchProjectModelsForEmbed": {
+        "stepId": "step//./src/workflows/embed-steps//fetchProjectModelsForEmbed"
+      },
+      "markProjectSynced": {
+        "stepId": "step//./src/workflows/embed-steps//markProjectSynced"
+      }
+    },
+    "src/workflows/interpret-steps.ts": {
+      "fetchModel": {
+        "stepId": "step//./src/workflows/interpret-steps//fetchModel"
+      },
+      "fetchModelsByIds": {
+        "stepId": "step//./src/workflows/interpret-steps//fetchModelsByIds"
+      },
+      "fetchModelsByProject": {
+        "stepId": "step//./src/workflows/interpret-steps//fetchModelsByProject"
+      },
+      "fetchOrgSettings": {
+        "stepId": "step//./src/workflows/interpret-steps//fetchOrgSettings"
+      },
+      "fetchUpstreamModels": {
+        "stepId": "step//./src/workflows/interpret-steps//fetchUpstreamModels"
+      },
+      "interpretModelWithLLM": {
+        "stepId": "step//./src/workflows/interpret-steps//interpretModelWithLLM"
+      },
+      "saveInterpretation": {
+        "stepId": "step//./src/workflows/interpret-steps//saveInterpretation"
+      }
+    }
+  },
+  "workflows": {
+    "src/workflows/embed.ts": {
+      "embedModelsWorkflow": {
+        "workflowId": "workflow//./src/workflows/embed//embedModelsWorkflow",
+        "graph": {
+          "nodes": [
+            {
+              "id": "start",
+              "type": "workflowStart",
+              "data": {
+                "label": "Start: embedModelsWorkflow",
+                "nodeKind": "workflow_start"
+              }
+            },
+            {
+              "id": "end",
+              "type": "workflowEnd",
+              "data": {
+                "label": "Return",
+                "nodeKind": "workflow_end"
+              }
+            }
+          ],
+          "edges": [
+            {
+              "id": "e_start_end",
+              "source": "start",
+              "target": "end",
+              "type": "default"
+            }
+          ]
+        }
+      }
+    },
+    "src/workflows/interpret.ts": {
+      "bulkInterpretWorkflow": {
+        "workflowId": "workflow//./src/workflows/interpret//bulkInterpretWorkflow",
+        "graph": {
+          "nodes": [
+            {
+              "id": "start",
+              "type": "workflowStart",
+              "data": {
+                "label": "Start: bulkInterpretWorkflow",
+                "nodeKind": "workflow_start"
+              }
+            },
+            {
+              "id": "end",
+              "type": "workflowEnd",
+              "data": {
+                "label": "Return",
+                "nodeKind": "workflow_end"
+              }
+            }
+          ],
+          "edges": [
+            {
+              "id": "e_start_end",
+              "source": "start",
+              "target": "end",
+              "type": "default"
+            }
+          ]
+        }
+      },
+      "interpretModelWorkflow": {
+        "workflowId": "workflow//./src/workflows/interpret//interpretModelWorkflow",
+        "graph": {
+          "nodes": [
+            {
+              "id": "start",
+              "type": "workflowStart",
+              "data": {
+                "label": "Start: interpretModelWorkflow",
+                "nodeKind": "workflow_start"
+              }
+            },
+            {
+              "id": "end",
+              "type": "workflowEnd",
+              "data": {
+                "label": "Return",
+                "nodeKind": "workflow_end"
+              }
+            }
+          ],
+          "edges": [
+            {
+              "id": "e_start_end",
+              "source": "start",
+              "target": "end",
+              "type": "default"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "classes": {}
+}
