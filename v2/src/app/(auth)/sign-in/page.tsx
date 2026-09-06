@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -21,6 +21,11 @@ export default function SignInPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [devEnabled, setDevEnabled] = useState(false);
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "development") return;
+    fetch("/api/dev-auth").then(r => r.json()).then(d => setDevEnabled(d.enabled === true)).catch(() => {});
+  }, []);
   const router = useRouter();
   const supabase = createClient();
 
@@ -42,29 +47,25 @@ export default function SignInPage() {
 
   async function handleDevLogin() {
     setLoading(true);
-    const res = await fetch("/api/dev-auth", { method: "POST" });
-    if (!res.ok) {
-      toast.error("Dev auth failed");
+    try {
+      const res = await fetch("/api/dev-auth", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Local sign-in failed.");
+      router.push("/dashboard");
+      router.refresh();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Local sign-in failed.");
+    } finally {
       setLoading(false);
-      return;
     }
-    const { email: devEmail, password: devPassword } = await res.json() as { email: string; password: string };
-    const { error } = await supabase.auth.signInWithPassword({ email: devEmail, password: devPassword });
-    if (error) {
-      toast.error(error.message);
-      setLoading(false);
-      return;
-    }
-    router.push("/dashboard");
-    router.refresh();
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl">Sign in</CardTitle>
+        <CardTitle className="text-2xl">Admin sign in</CardTitle>
         <CardDescription>
-          Enter your email and password to sign in to your account.
+          Manage your Slack agent and inspect your team’s conversations.
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSignIn}>
@@ -95,9 +96,9 @@ export default function SignInPage() {
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "Signing in..." : "Sign in"}
           </Button>
-          {process.env.NODE_ENV === "development" && (
+          {devEnabled && (
             <Button type="button" variant="outline" className="w-full" disabled={loading} onClick={handleDevLogin}>
-              Dev admin login
+              Enter local workspace
             </Button>
           )}
           <p className="text-sm text-muted-foreground">

@@ -396,7 +396,7 @@ export function SettingsForm({
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              <a href="/api/integrations/slack/install">
+              <a href="/dashboard/settings/integrations">
                 <Button type="button" variant={slackConnected ? "outline" : "default"}>
                   {slackConnected ? "Reconnect Slack" : "Connect Slack"}
                 </Button>
@@ -406,7 +406,7 @@ export function SettingsForm({
                   <p className="text-xs font-medium text-muted-foreground">Events webhook URL</p>
                   <div className="flex gap-2 items-center">
                     <code className="text-xs bg-muted px-2 py-1.5 rounded font-mono flex-1 truncate">
-                      {mcpEndpoint.replace("/api/mcp", "/api/integrations/slack/events")}
+                      {mcpEndpoint.replace("/api/mcp", `/eve/v1/slack?organisation_id=${encodeURIComponent(settings?.organisation_id ?? "")}`)}
                     </code>
                     <Button
                       type="button"
@@ -414,7 +414,7 @@ export function SettingsForm({
                       size="icon"
                       className="h-7 w-7 shrink-0"
                       onClick={() => {
-                        navigator.clipboard.writeText(mcpEndpoint.replace("/api/mcp", "/api/integrations/slack/events"));
+                        navigator.clipboard.writeText(mcpEndpoint.replace("/api/mcp", `/eve/v1/slack?organisation_id=${encodeURIComponent(settings?.organisation_id ?? "")}`));
                         toast.success("Copied!");
                       }}
                     >

@@ -64,3 +64,8 @@ node_modules/
 # v2 specific
 v2/.env.local
 v2/.env*.local
+# eve generated runtime and local durable state
+v2/.eve/
+v2/.output/
+v2/.vercel/
+v2/.nitro/

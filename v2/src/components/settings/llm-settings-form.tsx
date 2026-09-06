@@ -322,12 +322,12 @@ export function LlmSettingsForm({ settings, orgName, maskedKeys }: LlmSettingsFo
         <CardHeader>
           <CardTitle>Model Configuration</CardTitle>
           <CardDescription>
-            Choose which models to use for chat responses and generating embeddings.
+            Choose which models to use for Slack responses and knowledge search.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-3">
-            <h4 className="text-sm font-medium">Chat</h4>
+            <h4 className="text-sm font-medium">Agent responses</h4>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Provider</Label>
@@ -367,7 +367,7 @@ export function LlmSettingsForm({ settings, orgName, maskedKeys }: LlmSettingsFo
           </div>
 
           <div className="space-y-3">
-            <h4 className="text-sm font-medium">Embeddings</h4>
+            <h4 className="text-sm font-medium">Knowledge search</h4>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Provider</Label>

@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
 
-Ragstar connects to your **dbt** project, builds a knowledge base from your models and documentation, and lets anyone ask data questions in plain English — via a web dashboard, Slack, or any MCP-compatible AI client (Claude Desktop, Cursor, etc.).
+Ragstar connects to your **dbt** project, builds a knowledge base from your models and documentation, and lets anyone ask data questions in plain English — in Slack. The web dashboard is for administration and conversation review; the MCP endpoint exposes the knowledge base to compatible clients.
 
 ---
 
@@ -11,7 +11,7 @@ Ragstar connects to your **dbt** project, builds a knowledge base from your mode
 
 - **dbt Project Sync** — connect via dbt Cloud API or GitHub to import models and docs
 - **Knowledge Base** — semantic search over your dbt model descriptions and columns
-- **AI Chat** — ask questions in natural language; the assistant searches your models and generates SQL
+- **Slack agent** — ask questions in natural language; the assistant searches your models and drafts SQL
 - **Slack Bot** — mention the bot in any channel to get AI-powered answers (no env vars required — credentials entered via the UI)
 - **MCP Server** — expose your knowledge base to Claude Desktop, Cursor, or any MCP client
 - **Multi-provider LLM** — choose OpenAI, Anthropic, or Google for chat
@@ -19,6 +19,8 @@ Ragstar connects to your **dbt** project, builds a knowledge base from your mode
 ---
 
 ## Quick Start
+
+Use **Node.js 24**. The Slack agent now uses **eve**; see the [migration guide](./v2/EVE_MIGRATION.md) for the new webhook URL and setup sequence.
 
 ### Prerequisites
 
@@ -110,11 +112,11 @@ On Vercel, `VERCEL_URL` is injected automatically per deployment so `NEXT_PUBLIC
 
 No environment variables needed. Ragstar uses credentials you enter directly in the UI:
 
-1. Go to **Settings → Integrations** and click **Connect Slack**
+1. Go to **Slack** and click **Connect Slack**
 2. The guided dialog walks you through creating a Slack app — you can paste the generated app manifest directly into the Slack API dashboard
 3. Enter your **Bot User OAuth Token** and **Signing Secret** and save
 
-The events webhook URL is shown in the dialog and is pre-filled in the manifest.
+After saving credentials, copy the Events endpoint from the dialog into Slack’s Event Subscriptions and save it. Existing apps must update their Request URL to the new eve endpoint.
 
 ### GitHub
 
@@ -134,7 +136,7 @@ Enables access to private repositories when connecting dbt projects.
 | Frontend + API | Next.js 16 (App Router) |
 | Database | Supabase (PostgreSQL + pgvector) |
 | Authentication | Supabase Auth |
-| LLM Integration | Vercel AI SDK v6 |
+| Agent runtime | eve (Slack) + Vercel AI SDK 7 |
 | Styling | TailwindCSS + shadcn/ui |
 
 ---

@@ -1,12 +1,16 @@
 # Ragstar v2
 
-AI-powered data analyst for dbt-based data teams.
+AI-powered data analyst for dbt-based data teams. Slack is the conversation interface; the web app is for administration and conversation review.
+
+See [local development](./LOCAL_DEVELOPMENT.md) for passwordless local admin entry with `pnpm dev:local`.
+
+The Slack agent now uses eve. See [Eve migration and setup](./EVE_MIGRATION.md) for the updated Slack endpoint, Node.js requirements, and validation commands.
 
 ## Tech Stack
 
 - **Next.js 16** - React framework with App Router
 - **Supabase** - PostgreSQL database with pgvector, authentication, and edge functions
-- **Vercel AI SDK** - LLM integration with streaming and tool calling
+- **eve + Vercel AI SDK 7** - Durable Slack agent with dbt retrieval tools
 - **TailwindCSS** - Styling
 - **shadcn/ui** - UI components
 
@@ -14,7 +18,7 @@ AI-powered data analyst for dbt-based data teams.
 
 ### Prerequisites
 
-- Node.js 20+
+- Node.js 24
 - pnpm
 - Supabase CLI (`brew install supabase/tap/supabase`)
 

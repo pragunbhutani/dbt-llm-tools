@@ -12,10 +12,10 @@ export async function verifySlackSignature(
   const timestamp = request.headers.get("x-slack-request-timestamp");
   const signature = request.headers.get("x-slack-signature");
 
-  if (!timestamp || !signature) return false;
+  if (!timestamp || !/^\d+$/.test(timestamp) || !signature || !/^v0=[a-f0-9]{64}$/.test(signature)) return false;
 
   // Reject requests older than 5 minutes to prevent replay attacks
-  const age = Math.abs(Date.now() / 1000 - parseInt(timestamp, 10));
+  const age = Math.abs(Date.now() / 1000 - Number(timestamp));
   if (age > 300) return false;
 
   const sigBasestring = `v0:${timestamp}:${body}`;

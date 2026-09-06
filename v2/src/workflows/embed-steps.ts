@@ -1,5 +1,5 @@
-import { createAdminClient } from "@/lib/supabase/admin";
-import { embedTexts, buildModelDocument } from "@/lib/ai/embeddings";
+import { createAdminClient } from "../lib/supabase/admin";
+import { embedTexts, buildModelDocument } from "../lib/ai/embeddings";
 
 export type EmbedModelRow = {
   id: string;

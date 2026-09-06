@@ -1,5 +1,5 @@
-import { createAdminClient } from "@/lib/supabase/admin";
-import { getLLMModel } from "@/lib/ai/providers";
+import { createAdminClient } from "../lib/supabase/admin";
+import { getLLMModel } from "../lib/ai/providers";
 import { generateObject } from "ai";
 import { z } from "zod";
 

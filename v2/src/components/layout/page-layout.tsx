@@ -13,26 +13,23 @@ interface PageLayoutProps {
 export function PageLayout({ title, subtitle, actions, children, fill }: PageLayoutProps) {
   return (
     <div className="flex h-full flex-col">
-      <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b bg-background px-4">
+      <header className="flex h-14 shrink-0 items-center gap-3 border-b bg-background px-4 sm:px-6">
         <SidebarTrigger className="-ml-1" />
-        <div className="mr-2 w-px h-6 shrink-0 bg-border" />
-        <div className="flex flex-1 items-center justify-between min-w-0">
-          <BreadcrumbNav currentLabel={title} />
-          {actions && <div className="flex shrink-0 items-center gap-2 ml-4">{actions}</div>}
-        </div>
+        <div className="h-4 w-px shrink-0 bg-border" />
+        <div className="min-w-0 truncate"><BreadcrumbNav currentLabel={title} /></div>
       </header>
-      {fill ? (
-        <div className="flex-1 overflow-hidden min-h-0 flex flex-col p-2">
+      <main className={fill ? "flex min-h-0 flex-1 flex-col overflow-hidden p-4 sm:p-8" : "flex-1 overflow-auto bg-background p-4 sm:p-8 lg:px-10"}>
+        <div className={fill ? "flex min-h-0 flex-1 flex-col" : "mx-auto w-full max-w-6xl"}>
+          <div className="mb-8 flex shrink-0 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl break-words">{title}</h1>
+              {subtitle && <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{subtitle}</p>}
+            </div>
+            {actions && <div className="flex flex-wrap items-center gap-2 sm:pt-1">{actions}</div>}
+          </div>
           {children}
         </div>
-      ) : (
-        <div className="flex-1 overflow-auto bg-sidebar p-6">
-          {subtitle && (
-            <p className="text-sm text-muted-foreground mb-6">{subtitle}</p>
-          )}
-          {children}
-        </div>
-      )}
+      </main>
     </div>
   );
 }

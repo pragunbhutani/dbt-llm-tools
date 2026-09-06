@@ -7,10 +7,9 @@ import {
   LayoutDashboard,
   Database,
   BookOpen,
-  Settings,
   LogOut,
   Star,
-  MessageSquare,
+  Hash,
   History,
   BrainCircuit,
   Plug,
@@ -40,31 +39,26 @@ import {
 
 const navGroups = [
   {
-    label: "Overview",
+    label: "Workspace",
     items: [
-      { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, exact: true },
-    ],
-  },
-  {
-    label: "AI",
-    items: [
-      { href: "/dashboard/chat", label: "New Chat", icon: MessageSquare, exact: true },
+      { href: "/dashboard", label: "Overview", icon: LayoutDashboard, exact: true },
+      { href: "/dashboard/slack", label: "Slack", icon: Hash },
       { href: "/dashboard/conversations", label: "Conversations", icon: History },
     ],
   },
   {
-    label: "Data",
+    label: "Knowledge",
     items: [
-      { href: "/dashboard/projects", label: "Projects", icon: Database },
-      { href: "/dashboard/knowledge-base", label: "Knowledge Base", icon: BookOpen },
+      { href: "/dashboard/projects", label: "dbt Projects", icon: Database },
+      { href: "/dashboard/knowledge-base", label: "Models", icon: BookOpen },
     ],
   },
   {
-    label: "Settings",
+    label: "Configuration",
     items: [
-      { href: "/dashboard/settings/llm", label: "LLM Providers", icon: BrainCircuit },
-      { href: "/dashboard/settings/integrations", label: "Integrations", icon: Plug },
-      { href: "/dashboard/settings/developer", label: "Developer", icon: Code2 },
+      { href: "/dashboard/settings/llm", label: "Agent settings", icon: BrainCircuit },
+      { href: "/dashboard/settings/integrations", label: "Data connections", icon: Plug },
+      { href: "/dashboard/settings/developer", label: "API access", icon: Code2 },
     ],
   },
 ];
@@ -101,9 +95,7 @@ export function AppShell({ children, user, orgName, sidebarDefaultOpen = true }:
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <Star className="h-4 w-4" />
             </div>
-            <span className="truncate font-semibold group-data-[collapsible=icon]:hidden">
-              Ragstar
-            </span>
+            <div className="min-w-0 group-data-[collapsible=icon]:hidden"><span className="block truncate font-semibold tracking-tight">Ragstar</span><span className="block text-[11px] text-muted-foreground">Slack agent workspace</span></div>
           </div>
         </SidebarHeader>
 
@@ -171,7 +163,10 @@ export function AppShell({ children, user, orgName, sidebarDefaultOpen = true }:
         <SidebarRail />
       </Sidebar>
 
-      <SidebarInset className="h-svh overflow-hidden">{children}</SidebarInset>
+      <SidebarInset className="h-svh overflow-hidden">
+        {process.env.NODE_ENV === "development" && <div className="shrink-0 border-b border-amber-200 bg-amber-50 px-4 py-1.5 text-xs text-amber-900">Local development</div>}
+        <div className="min-h-0 flex-1">{children}</div>
+      </SidebarInset>
     </SidebarProvider>
   );
 }

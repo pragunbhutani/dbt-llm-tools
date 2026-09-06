@@ -53,7 +53,7 @@ export default async function KnowledgeBasePage() {
 
   return (
     <PageLayout
-      title="Knowledge Base"
+      title="Models"
       subtitle={count != null ? `${count} models` : undefined}
     >
       <ModelsTable

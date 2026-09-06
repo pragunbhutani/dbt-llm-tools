@@ -43,12 +43,13 @@ export default async function IntegrationsSettingsPage() {
 
   const headersList = await headers();
   const host = headersList.get("host") ?? undefined;
-  const slackEventsUrl = `${getBaseUrl(host)}/api/integrations/slack/events`;
+  const slackEventsUrl = `${getBaseUrl(host)}/eve/v1/slack?organisation_id=${encodeURIComponent(orgId)}`;
 
   return (
-    <PageLayout title="Integrations" subtitle="Connect Ragstar to Slack, GitHub, data warehouses, and BI tools.">
+    <PageLayout title="Data connections" subtitle="Manage sources and services connected to your workspace. Slack has its own setup page.">
       <div className="space-y-6">
         <IntegrationsSettingsForm
+          hideSlack
           slackConnected={!!settingsResult.data?.slack_bot_token}
           githubConnected={!!settingsResult.data?.github_access_token}
           slackEventsUrl={slackEventsUrl}

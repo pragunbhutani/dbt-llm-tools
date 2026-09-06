@@ -127,6 +127,7 @@ export interface Database {
           slack_team_id: string | null;
           slack_bot_token: string | null;
           slack_bot_user_id: string | null;
+          slack_signing_secret: string | null;
           github_access_token: string | null;
           github_installation_id: string | null;
           created_at: string;
@@ -146,6 +147,7 @@ export interface Database {
           slack_team_id?: string | null;
           slack_bot_token?: string | null;
           slack_bot_user_id?: string | null;
+          slack_signing_secret?: string | null;
           github_access_token?: string | null;
           github_installation_id?: string | null;
           created_at?: string;
@@ -165,6 +167,7 @@ export interface Database {
           slack_team_id?: string | null;
           slack_bot_token?: string | null;
           slack_bot_user_id?: string | null;
+          slack_signing_secret?: string | null;
           github_access_token?: string | null;
           github_installation_id?: string | null;
           created_at?: string;

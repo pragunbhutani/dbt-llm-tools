@@ -13,16 +13,16 @@ import {
 } from "@/components/ui/breadcrumb";
 
 const SEGMENT_LABELS: Record<string, string | null> = {
-  dashboard: "Dashboard",
+  dashboard: "Overview",
   projects: "Projects",
-  "knowledge-base": "Knowledge Base",
+  "knowledge-base": "Models",
   models: null, // URL artifact — skip
   conversations: "Conversations",
   settings: "Settings",
-  llm: "LLM Providers",
-  integrations: "Integrations",
-  developer: "Developer",
-  chat: "New Chat",
+  llm: "Agent settings",
+  integrations: "Data connections",
+  developer: "API access",
+  slack: "Slack",
   onboarding: "Onboarding",
 };
 

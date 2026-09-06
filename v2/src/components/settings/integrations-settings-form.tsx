@@ -20,12 +20,16 @@ interface IntegrationsSettingsFormProps {
   slackConnected: boolean;
   githubConnected: boolean;
   slackEventsUrl: string;
+  slackOnly?: boolean;
+  hideSlack?: boolean;
 }
 
 export function IntegrationsSettingsForm({
   slackConnected,
   githubConnected,
   slackEventsUrl,
+  slackOnly = false,
+  hideSlack = false,
 }: IntegrationsSettingsFormProps) {
   const router = useRouter();
   const [isSlackConnected, setIsSlackConnected] = useState(slackConnected);
@@ -34,7 +38,7 @@ export function IntegrationsSettingsForm({
 
   return (
     <div className="space-y-6">
-      <Card>
+      {!hideSlack && <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
@@ -45,7 +49,7 @@ export function IntegrationsSettingsForm({
             </div>
             {isSlackConnected ? (
               <Badge variant="outline" className="text-xs text-emerald-600 border-emerald-200 bg-emerald-50 shrink-0">
-                <CheckCircle2 className="h-3 w-3 mr-1" />Connected
+                <CheckCircle2 className="h-3 w-3 mr-1" />Credentials saved
               </Badge>
             ) : (
               <Badge variant="outline" className="text-xs text-muted-foreground shrink-0">Not connected</Badge>
@@ -85,9 +89,9 @@ export function IntegrationsSettingsForm({
             </div>
           )}
         </CardContent>
-      </Card>
+      </Card>}
 
-      <Card>
+      {!slackOnly && <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
@@ -112,7 +116,7 @@ export function IntegrationsSettingsForm({
             </Button>
           </a>
         </CardContent>
-      </Card>
+      </Card>}
     </div>
   );
 }

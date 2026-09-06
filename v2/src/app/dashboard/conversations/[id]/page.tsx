@@ -49,6 +49,9 @@ export default async function ConversationDetailPage({
     .eq("message_type", "message")
     .order("sequence_number", { ascending: true });
 
+  const context = conversation.conversation_context as { thread_ts?: string } | null;
+  const slackLink = conversation.channel === "slack" && conversation.channel_id && /^[CDG][A-Z0-9]+$/.test(conversation.channel_id) && context?.thread_ts && /^\d+\.\d+$/.test(context.thread_ts)
+    ? `https://slack.com/archives/${conversation.channel_id}/p${context.thread_ts.replace(".", "")}` : null;
   const title = conversation.title ?? conversation.initial_question;
 
   const subtitle = new Date(conversation.started_at).toLocaleDateString(undefined, {
@@ -64,7 +67,8 @@ export default async function ConversationDetailPage({
       title={title ?? "Conversation"}
       subtitle={subtitle}
       actions={
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {slackLink && <Button variant="outline" size="sm" asChild><a href={slackLink} target="_blank" rel="noreferrer">Open in Slack</a></Button>}
           <Badge variant="outline" className="text-xs">
             {channelLabel[conversation.channel] ?? conversation.channel}
           </Badge>
@@ -85,7 +89,7 @@ export default async function ConversationDetailPage({
               <User className="h-3.5 w-3.5 text-muted-foreground" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium mb-1">You</p>
+              <p className="text-sm font-medium mb-1">Slack participant</p>
               <p className="text-sm">{conversation.initial_question}</p>
             </div>
           </div>
@@ -103,7 +107,7 @@ export default async function ConversationDetailPage({
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium mb-1">{isUser ? "You" : "Ragstar"}</p>
+                <p className="text-sm font-medium mb-1">{isUser ? (conversation.user_external_id ? `Slack user ${conversation.user_external_id}` : "Participant") : "Ragstar"}</p>
                 <div className="text-sm prose prose-sm max-w-none dark:prose-invert">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {part.content}

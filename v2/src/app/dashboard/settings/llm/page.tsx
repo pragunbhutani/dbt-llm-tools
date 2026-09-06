@@ -40,7 +40,7 @@ export default async function LlmSettingsPage() {
   };
 
   return (
-    <PageLayout title="LLM Providers" subtitle="Configure API keys and model preferences for your organisation.">
+    <PageLayout title="Agent settings" subtitle="Configure the models behind your Slack agent’s answers and knowledge search.">
       <LlmSettingsForm settings={settings ?? null} orgName={orgName} maskedKeys={maskedKeys} />
     </PageLayout>
   );

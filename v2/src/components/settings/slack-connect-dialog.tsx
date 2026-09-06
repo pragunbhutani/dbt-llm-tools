@@ -14,7 +14,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-function generateManifest(eventsUrl: string) {
+function generateManifest() {
   return {
     display_information: {
       name: "Ragstar",
@@ -32,6 +32,7 @@ function generateManifest(eventsUrl: string) {
         bot: [
           "app_mentions:read",
           "channels:history",
+          "channels:read",
           "chat:write",
           "im:history",
           "im:read",
@@ -41,8 +42,7 @@ function generateManifest(eventsUrl: string) {
     },
     settings: {
       event_subscriptions: {
-        request_url: eventsUrl,
-        bot_events: ["app_mention", "message.im"],
+        bot_events: ["app_mention", "message.im", "message.channels"],
       },
       org_deploy_enabled: false,
       socket_mode_enabled: false,
@@ -70,7 +70,7 @@ export function SlackConnectDialog({
   const [saving, setSaving] = useState(false);
   const [disconnecting, setDisconnecting] = useState(false);
 
-  const manifest = generateManifest(slackEventsUrl);
+  const manifest = generateManifest();
   const manifestJson = JSON.stringify(manifest, null, 2);
 
   const copy = (text: string, label: string) => {
@@ -92,8 +92,7 @@ export function SlackConnectDialog({
         toast.error(data.error ?? "Failed to connect Slack");
         return;
       }
-      toast.success("Slack connected!");
-      setOpen(false);
+      toast.success("Credentials saved. Now set the Events endpoint in Slack.");
       setBotToken("");
       setSigningSecret("");
       onConnected();
@@ -122,11 +121,11 @@ export function SlackConnectDialog({
           </Button>
         </DialogTrigger>
 
-        <DialogContent className="sm:max-w-6xl p-0 gap-0 overflow-hidden">
-          <div className="grid grid-cols-2 min-h-[560px]">
+        <DialogContent className="w-[calc(100%-2rem)] sm:max-w-4xl max-h-[90svh] overflow-y-auto p-0 gap-0">
+          <div className="grid grid-cols-1 md:grid-cols-2">
 
             {/* ── Left: setup guide ── */}
-            <div className="flex flex-col p-8 overflow-y-auto border-r">
+            <div className="flex flex-col p-5 sm:p-8 md:border-r">
               <DialogHeader className="mb-6 shrink-0">
                 <DialogTitle className="text-xl">Connect Ragstar to Slack</DialogTitle>
                 <p className="text-sm text-muted-foreground mt-1">
@@ -179,6 +178,7 @@ export function SlackConnectDialog({
                     <>Under <strong>OAuth &amp; Permissions</strong>, copy the <strong>Bot User OAuth Token</strong> (starts with <code className="bg-muted px-1 rounded text-[11px]">xoxb-</code>).</>,
                     <>Under <strong>Basic Information → App Credentials</strong>, copy the <strong>Signing Secret</strong>.</>,
                     <>Paste both on the right and click <strong>Save &amp; Connect</strong>.</>,
+                    <>After saving, open <strong>Event Subscriptions</strong> in Slack, enable events, and paste the <strong>Events endpoint</strong> shown here as the Request URL. Wait for verification and save.</>,
                   ].map((step, i) => (
                     <li key={i} className="flex gap-3">
                       <span className="shrink-0 text-xs font-semibold text-muted-foreground w-4 pt-0.5">{i + 1}.</span>
@@ -190,7 +190,7 @@ export function SlackConnectDialog({
             </div>
 
             {/* ── Right: credentials form ── */}
-            <div className="flex flex-col p-8 bg-muted/30">
+            <div className="flex flex-col p-5 sm:p-8 bg-muted/30">
               <div className="mb-8">
                 <h3 className="font-semibold">Your credentials</h3>
                 <p className="text-sm text-muted-foreground mt-1">
@@ -245,7 +245,7 @@ export function SlackConnectDialog({
                     </button>
                   </div>
                   <p className="text-[11px] text-muted-foreground">
-                    Already included in the manifest. Only copy this if you&apos;re updating an existing app manually.
+                    Save credentials first, then paste this URL into Slack&apos;s Event Subscriptions. Existing apps must update their Request URL too. For local development, expose this server through an HTTPS tunnel and replace the localhost origin with your tunnel URL, keeping the full path and query string.
                   </p>
                 </div>
 
